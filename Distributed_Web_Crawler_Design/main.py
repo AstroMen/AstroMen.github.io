@@ -1,4 +1,5 @@
 import time
+import json
 import yaml
 import argparse
 import hashlib
@@ -69,6 +70,9 @@ class URLFetcher:
             response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
 
         data = self.get_app_details(response)
+        
+        # 将similar_apps_info序列化为JSON字符串
+        data['similar_apps_info'] = json.dumps(data['similar_apps_info'])
         
         # 请求之间添加随机间隔，防止请求速度过快被封禁
         time.sleep(random.uniform(0.5, 1.5))
@@ -195,8 +199,8 @@ class DataProcessor:
             auto_offset_reset='earliest',  # 从最早的消息开始消费
             group_id='crawler-group'  # 使用group_id，可以在多个消费者之间自动均衡分区
         )
-        # threading.Thread(target=self.handle_url, args=(url,)).start()  # 使用线程处理URL
         
+        # threading.Thread(target=self.handle_url, args=(url,)).start()  # 使用线程处理URL
         with ThreadPoolExecutor(max_workers=max_threads) as executor:
             for message in consumer:
                 url = message.value
@@ -214,7 +218,6 @@ def main():
     fetcher = URLFetcher(USER_AGENTS)
     processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher)  # 传入 fetcher
     # result = processor.process("http://example.com")  # initialize to start crawler
-    # print(result)
     processor.consume_urls_from_kafka()
 
 
