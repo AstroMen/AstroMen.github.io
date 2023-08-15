@@ -16,7 +16,7 @@ In an era abundant with digital content, web crawlers have become pivotal for da
 4. Store the scraped data in the Apache Cassandra database, ensuring high availability and scalability for voluminous data.
 
 ## Code Link
-[Click here to access the code](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design)
+Click here to access the code [https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design)
 
 ## Sample Configuration File (config.yaml)
 
