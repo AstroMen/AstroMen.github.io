@@ -195,8 +195,8 @@ class DataProcessor:
         consumer = KafkaConsumer(
             self.kafka_config['topic_name'],
             bootstrap_servers=self.kafka_config['bootstrap_servers'],
-            auto_offset_reset='earliest',
-            group_id='crawler-group'  # Using group_id, partitions can be automatically balanced across multiple consumers
+            group_id=self.kafka_config.get('group_id', None),  # Using group_id, partitions can be automatically balanced across multiple consumers
+            auto_offset_reset='earliest'
         )
         # 1. Urls are processed using thread pools
         with ThreadPoolExecutor(max_threads) as executor:
