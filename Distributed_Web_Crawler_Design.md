@@ -159,7 +159,7 @@ In this instance, we established a topic named spider_urls. Ensure the Zookeeper
 
 ### Rate Limiting
    - Incorporate a more sophisticated rate-limiting system to prevent IP bans or respect the robots.txt file.
-   - 
+
 ### Parallel Processing
    - Improve the crawler's speed by implementing more advanced parallel processing techniques or algorithms.
 
