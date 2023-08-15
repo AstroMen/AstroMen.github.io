@@ -1,0 +1,15 @@
+# config.yaml
+
+spider:
+  user_agent: 'Your User Agent String'
+  delay: 10
+
+kafka:
+  bootstrap_servers: 'localhost:9092'
+  topic_name: 'urls_to_crawl'
+
+cassandra:
+  hosts: ['localhost']
+  port: 9042
+  keyspace: 'web_crawler'
+  table: 'crawled_data'
