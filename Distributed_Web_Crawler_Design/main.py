@@ -54,12 +54,14 @@ class URLFetcher:
         
         # Fetch web page using randomly selected User-Agent and proxy
         proxy = random.choice(PROXY_POOL)
-        response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
 
-        # If received a 403 error (Forbidden), change the proxy and try again
-        if response.status_code == 403:
-            logging.info(f"Proxy {proxy} blocked. Retrying with a different proxy.")
+        try:
+            response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
+            response.raise_for_status()  # This will raise an HTTPError for 4xx and 5xx status codes
+        except requests.HTTPError as e:
+            logging.error(f"Failed to fetch the URL {url} with error: {e}")
             proxy = random.choice(PROXY_POOL)
+            logging.info(f"Retrying with a different proxy: {proxy}")
             response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
 
         data = self.get_app_details(response)
@@ -153,7 +155,7 @@ class DataProcessor:
                 # Send message to Kafka with a partition key
                 self.producer.send(self.kafka_config['topic_name'], key=hash_key, value=url)
             except Exception as e:
-                logging.error(f"Failed to send URL {url} to Kafka: {e}")
+                logging.error(f"Failed to send URL {url} to Kafka. Error: {e}")
 
     def store_data_in_cassandra(self, url, data):
         # Dynamically generate the CQL query string
@@ -168,7 +170,7 @@ class DataProcessor:
             params = [url] + list(data.values())
             self.session.execute(query, params)
         except Exception as e:
-            logging.error(f"Failed to store data for URL {url} in Cassandra: {e}")
+            logging.error(f"Failed to store data for URL {url} in Cassandra. Error: {e}")
 
     def process(self, url):
         fetched_data, new_urls = self.fetcher.fetch(url)
