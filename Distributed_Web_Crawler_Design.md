@@ -4,6 +4,10 @@
 </p>
     Using Kafka and Cassandra
 
+## Introduction
+
+In the age of vast digital content, web crawling becomes a fundamental process for data retrieval and aggregation. Traditional web crawling approaches often hit bottlenecks with scalability, resilience, and efficiency. Distributed web crawling systems, like the one detailed in this document, provide solutions to these challenges by harnessing the combined power and reliability of distributed databases and message brokers.
+
 ## 1. Setting Up Resources in Cassandra and Kafka
 ### Cassandra:
 #### Create Keyspace:
@@ -95,8 +99,14 @@ In this instance, we established a topic named spider_urls. Ensure the Zookeeper
 ### Fault Tolerance
    - Both Kafka and Cassandra are designed for high availability
 
+### Resilience
+   - With the inherent fault tolerance of distributed systems, your web crawler is less likely to suffer from outages.
+
 ### Deduplication
    - Using Bloom filters or similar to avoid re-crawling the same URLs
+
+### Cost Efficiency
+   - With distributed systems, you can harness the power of multiple machines, often leading to cost savings.
 
 ## 5. Possible Improvements
 
@@ -108,3 +118,16 @@ In this instance, we established a topic named spider_urls. Ensure the Zookeeper
 
 ### Enhanced Cassandra Data Model
    - Incorporating secondary indexes, materialized views, etc.
+
+### Rate Limiting
+   - Incorporate a more sophisticated rate-limiting system to prevent IP bans or respect the robots.txt file.
+   - 
+### Parallel Processing
+   - Improve the crawler's speed by implementing more advanced parallel processing techniques or algorithms.
+
+### Data Enrichment
+   - Enhancing the stored data by integrating with third-party services or databases.
+
+### Monitoring and Alerts
+   - Implement monitoring for system health, and set up alerts for potential issues or anomalies.
+
