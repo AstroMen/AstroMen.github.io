@@ -7,6 +7,7 @@ spider:
     - 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134'
     # ... more user agents ...
   delay: 10
+  max_threads: 10
 
 kafka:
   bootstrap_servers:
