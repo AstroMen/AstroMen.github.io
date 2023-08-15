@@ -1,15 +1,27 @@
 # config.yaml
 
 spider:
-  user_agent: 'Your User Agent String'
+  user_agent:
+    - 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    - 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
+    - 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134'
+    # ... more user agents ...
   delay: 10
 
 kafka:
-  bootstrap_servers: 'localhost:9092'
-  topic_name: 'urls_to_crawl'
+  bootstrap_servers:
+    - 'kafka-server1:9092'
+    - 'kafka-server2:9092'
+    # ... more servers ...
+  topic_name: 'webpage-urls'
+  retries: 5
+  group_id: 'crawler-group'  # New group_id configuration
 
 cassandra:
-  hosts: ['localhost']
+  hosts:
+    - 'cassandra-node1'
+    - 'cassandra-node2'
+    # ... more nodes ...
   port: 9042
-  keyspace: 'web_crawler'
-  table: 'crawled_data'
+  keyspace: 'web_data'
+  table: 'web_content'
