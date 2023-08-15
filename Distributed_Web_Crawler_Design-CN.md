@@ -49,7 +49,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 ```
 在这里, 我们创建了一个名为spider_urls的topic。确保Zookeeper的地址（在这里是localhost:2181）与你的环境相匹配。--replication-factor和--partitions参数可以根据你的具体需求进行调整。
 
-## 1. 系统组件
+## 2. 系统组件
 
 ### URL Fetcher
    - 从Kafka的"URL-to-crawl" topic中消费URLs
@@ -66,7 +66,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
    - 发现新的URLs
    - 将它们发送到Kafka的"URL-to-crawl" topic
 
-## 2. 工作流
+## 3. 工作流
 
 ### URL的初始化
    - 放入初始的待爬取URLs到Kafka
@@ -84,7 +84,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 ### URL Distributor
    - 将新URLs推送回Kafka的"URL-to-crawl" topic
 
-## 3. 优势与特性
+## 4. 优势与特性
 
 ### 分布式和可扩展性
    - 增加消费者处理更多任务
@@ -95,7 +95,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 ### 去重
    - 使用布隆过滤器避免重复爬取
 
-## 4. 可能的改进
+## 5. 可能的改进
 
 ### Kafka流处理
    - 使用Kafka Streams处理数据
