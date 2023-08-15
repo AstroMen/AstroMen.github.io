@@ -15,14 +15,9 @@ class Config:
         with open(config_file, 'r') as file:
             self.config_data = yaml.safe_load(file)
 
-    # @property
-    # def spider_config(self):
-    #     return self.config_data.get('spider', {})
-
     @property
-    def user_agent_list(self):
-        return self.config_data.get('spider', {}).get('user_agent', [])
-
+    def spider_config(self):
+        return self.config_data.get('spider', {})
 
     @property
     def kafka_config(self):
@@ -211,7 +206,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     config = Config(args.config_file)
-    fetcher = URLFetcher(config.user_agent_list)
+    fetcher = URLFetcher(config.spider_config['user_agent'])
     processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher)
-
     processor.consume_urls_from_kafka(max_threads=config.spider_config['max_threads'])
