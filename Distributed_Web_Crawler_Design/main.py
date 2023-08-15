@@ -15,9 +15,14 @@ class Config:
         with open(config_file, 'r') as file:
             self.config_data = yaml.safe_load(file)
 
+    # @property
+    # def spider_config(self):
+    #     return self.config_data.get('spider', {})
+
     @property
-    def spider_config(self):
-        return self.config_data.get('spider', {})
+    def user_agent_list(self):
+        return self.config_data.get('spider', {}).get('user_agent', [])
+
 
     @property
     def kafka_config(self):
@@ -38,12 +43,6 @@ import random
 import re, requests
 from bs4 import BeautifulSoup
 
-# List of User-Agents to simulate different browsers
-USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134',
-]
 
 class URLFetcher:
     def __init__(self, user_agent_list):
@@ -212,7 +211,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     config = Config(args.config_file)
-    fetcher = URLFetcher(USER_AGENTS)
+    fetcher = URLFetcher(config.user_agent_list)
     processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher)
 
     processor.consume_urls_from_kafka(max_threads=config.spider_config['max_threads'])
