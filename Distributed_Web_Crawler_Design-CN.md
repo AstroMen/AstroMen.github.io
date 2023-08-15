@@ -16,7 +16,7 @@
 4. 将爬取到的数据存储到 Apache Cassandra 数据库，为大规模数据提供高可用性和可扩展性。
 
 ## 代码链接
-[点击这里查看代码]([https://afin.com/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
+[点击这里查看代码]([https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
 
 ## 配置文件示例 (config.yaml)
 
