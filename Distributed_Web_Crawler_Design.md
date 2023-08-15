@@ -59,7 +59,7 @@ In this instance, we established a topic named spider_urls. Ensure the Zookeeper
 ## 2. System Components
 
 ### URL Fetcher
-   - Consumes URLs from Kafka's "URL-to-crawl" topic
+   - Consumes URLs from Kafka's "webpage-urls" topic
    - Responsible for web page scraping
 
 ### Data Processor
@@ -71,7 +71,7 @@ In this instance, we established a topic named spider_urls. Ensure the Zookeeper
 
 ### URL Distributor
    - Discovers new URLs from the scraped web pages
-   - Pushes them back to Kafka's "URL-to-crawl" topic
+   - Pushes them back to Kafka's "webpage-urls" topic
 
 ## 3. Workflow
 
@@ -89,7 +89,7 @@ In this instance, we established a topic named spider_urls. Ensure the Zookeeper
    - Sends newly discovered URLs to the URL Distributor
 
 ### URL Distributor
-   - Pushes new URLs back into Kafka's "URL-to-crawl" topic
+   - Pushes new URLs back into Kafka's "webpage-urls" topic
 
 ## 4. Advantages and Features
 
