@@ -34,7 +34,11 @@ USE spider_data;
 ```cql
 CREATE TABLE IF NOT EXISTS web_content (
     url TEXT PRIMARY KEY,
-    data TEXT
+    app_name TEXT,
+    download_count TEXT,
+    app_description TEXT,
+    rating_score TEXT,
+    similar_apps_info TEXT  -- 存储为JSON字符串
 );
 ```
 这里, 我们创建了一个名为web_content的table，其中url作为主键。
