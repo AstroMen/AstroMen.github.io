@@ -6,12 +6,47 @@
 
 ## 简介
 
-在数字内容如此丰富的时代，网络爬虫成为数据检索和聚合的基础过程。传统的网络爬虫方法在可扩展性、弹性和效率上经常遇到瓶颈。本文详细描述的分布式网络爬虫系统，通过利用分布式数据库和消息代理的综合能力和可靠性，提供了解决这些挑战的方案。
+在数字内容盛行的时代，网络爬虫已成为数据检索和聚合的关键。但传统爬虫在可扩展性、弹性和效率上常面临挑战。本文所描述的分布式网络爬虫系统，针对这些问题，通过分布式数据库和消息代理的能力，实现了从 Google Play 商店爬取应用信息，并将其送至 Apache Kafka，最后存入 Apache Cassandra 数据库的流程。
+
+## 设计目标
+
+1. 使用多线程以提高爬取速度。
+2. 使用随机用户代理和代理池来避免被封禁。
+3. 使用 Apache Kafka 作为中间数据存储，提供缓冲机制，确保数据不会丢失。
+4. 将爬取到的数据存储到 Apache Cassandra 数据库，为大规模数据提供高可用性和可扩展性。
 
 ## 代码链接
 [点击这里查看代码]([https://afin.com/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
 
-## 1. 在Cassandra和Kafka中创建资源
+## 配置文件示例 (config.yaml)
+
+```yaml
+spider:
+  user_agent: ["Mozilla/5.0 ...", "Mozilla/5.0 ..."]
+  max_threads: 10
+kafka:
+  bootstrap_servers: ["kafka-server1:9092", "kafka-server2:9092"]
+  retries: 5
+  topic_name: "webpage-urls"
+  group_id: "google-play-crawlers"
+cassandra:
+  hosts: ["cassandra-node1", "cassandra-node2"]
+  port: 9042
+  keyspace: "spider_data"
+  table: "app_data"
+proxy_pool: ["http://proxy1.com:8080", "http://proxy2.com:8080", ...]
+```
+此脚本从配置文件读取所有配置信息，包括用户代理、Kafka、Cassandra和代理池配置。
+
+## 运行方式
+
+要运行此脚本，请确保已安装所需的依赖库，并使用以下命令运行：
+```bash
+$ python spider.py config.yaml
+```
+确保配置文件路径正确，并根据实际情况修改。
+
+## 1. Cassandra和Kafka的资源设置
 ### Cassandra：
 #### 创建 Keyspace:
 在Cassandra中，你可以使用CQL (Cassandra Query Language) 来创建keyspace和table。
@@ -60,7 +95,6 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 在这里, 我们创建了一个名为spider_urls的topic。确保Zookeeper的地址（在这里是localhost:2181）与你的环境相匹配。--replication-factor和--partitions参数可以根据你的具体需求进行调整。
 
 ## 2. 系统组件
-
 ### URL Fetcher
    - 从Kafka的"webpage-urls" topic中消费URLs
    - 负责网页抓取
@@ -133,4 +167,3 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 
 ### 监控和警报
    - 实现系统健康监控，并为潜在问题或异常设置警报。
-
