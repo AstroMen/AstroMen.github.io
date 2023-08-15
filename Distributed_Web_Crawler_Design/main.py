@@ -1,6 +1,11 @@
 import yaml
 import argparse
 import hashlib
+import logging
+import threading
+
+
+logging.basicConfig(level=logging.INFO)
 
 
 class Config:
@@ -22,6 +27,7 @@ class Config:
 
 
 from kafka import KafkaProducer
+from kafka import KafkaConsumer
 from cassandra.cluster import Cluster
 
 class URLFetcher:
@@ -78,6 +84,26 @@ class DataProcessor:
 
         return f"Processed and stored data for {url}"
 
+    def handle_url(self, url):
+        # 这个方法会在一个新线程中运行，用于处理从Kafka消费的每一个URL
+        fetched_data, new_urls = self.fetcher.fetch(url)
+        self.send_urls_to_kafka(new_urls)
+        self.store_data_in_cassandra(url, fetched_data)
+
+    def consume_urls_from_kafka(self):
+        consumer = KafkaConsumer(
+            self.kafka_config['topic_name'],
+            bootstrap_servers=self.kafka_config['bootstrap_servers'],
+            auto_offset_reset='earliest',  # 从最早的消息开始消费
+            group_id='crawler-group'  # 使用group_id，可以在多个消费者之间自动均衡分区
+        )
+
+        for message in consumer:
+            url = message.value
+            # 使用线程处理URL
+            threading.Thread(target=self.handle_url, args=(url,)).start()
+
+
 
 def main():
     parser = argparse.ArgumentParser(description="Distributed Crawler using Kafka and Cassandra.")
@@ -88,6 +114,7 @@ def main():
 
     processor = DataProcessor(config.kafka_config, config.cassandra_config)
     result = processor.process("http://example.com")
+    processor.consume_urls_from_kafka()
 
     print(result)
 
