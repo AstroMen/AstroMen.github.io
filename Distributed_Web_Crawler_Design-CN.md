@@ -59,7 +59,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 ## 2. 系统组件
 
 ### URL Fetcher
-   - 从Kafka的"URL-to-crawl" topic中消费URLs
+   - 从Kafka的"webpage-urls" topic中消费URLs
    - 负责网页抓取
 
 ### Data Processor
@@ -71,7 +71,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 
 ### URL Distributor
    - 发现新的URLs
-   - 将它们发送到Kafka的"URL-to-crawl" topic
+   - 将它们发送到Kafka的"webpage-urls" topic
 
 ## 3. 工作流
 
@@ -89,7 +89,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
    - 将新URLs发送给URL Distributor
 
 ### URL Distributor
-   - 将新URLs推送回Kafka的"URL-to-crawl" topic
+   - 将新URLs推送回Kafka的"webpage-urls" topic
 
 ## 4. 优势与特性
 
