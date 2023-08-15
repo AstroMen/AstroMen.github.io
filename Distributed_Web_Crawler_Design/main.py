@@ -1,5 +1,7 @@
 import yaml
 import argparse
+import hashlib
+
 
 class Config:
     def __init__(self, config_file):
@@ -38,17 +40,34 @@ class DataProcessor:
     def __init__(self, kafka_config, cassandra_config):
         self.kafka_config = kafka_config
         self.cassandra_config = cassandra_config
-        self.producer = KafkaProducer(bootstrap_servers=kafka_config['bootstrap_servers'])
+        # self.producer = KafkaProducer(bootstrap_servers=kafka_config['bootstrap_servers'])
+        self.producer = KafkaProducer(
+            bootstrap_servers=kafka_config['bootstrap_servers'],
+            retries=kafka_config.get('retries', 5),  # Add retries
+            compression_type='gzip'  # Use gzip compression
+        )
+        
+        # 对于Cassandra的重试机制，可以考虑使用cassandra的RetryPolicy
+
         self.cluster = Cluster(cassandra_config['hosts'], port=cassandra_config['port'])
         self.session = self.cluster.connect(cassandra_config['keyspace'])
 
     def send_urls_to_kafka(self, urls):
-        for url in urls:
-            self.producer.send(self.kafka_config['topic_name'], url)
-
+    for url in urls:
+        hash_key = hashlib.md5(url.encode()).hexdigest()
+        try:
+            # key: The partition in which messages are stored
+            self.producer.send(self.kafka_config['topic_name'], key=hash_key, value=url)
+            # self.producer.send(self.kafka_config['topic_name'], url)
+        except Exception as e:
+            logging.error(f"Failed to send URL {url} to Kafka: {e}")
+            
     def store_data_in_cassandra(self, url, data):
         query = f"INSERT INTO {self.cassandra_config['table']} (url, data) VALUES (%s, %s)"
-        self.session.execute(query, (url, data))
+        try:
+            self.session.execute(query, (url, data))
+        except Exception as e:
+            logging.error(f"Failed to store data for URL {url} in Cassandra: {e}")
 
     def process(self, url):
         fetcher = URLFetcher(config.spider_config['user_agent'])
