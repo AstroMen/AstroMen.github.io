@@ -34,7 +34,8 @@ from cassandra.cluster import Cluster
 PROXY_POOL = ['http://proxy1.com:8080', 'http://proxy2.com:8080', ...]
 
 import random
-import requests
+import re, requests
+from bs4 import BeautifulSoup
 
 # 添加一个User-Agent列表
 USER_AGENTS = [
@@ -67,12 +68,59 @@ class URLFetcher:
             proxy = random.choice(PROXY_POOL)
             response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
 
-        data = f"Data from {url}"
+        data = self.get_app_details(response)
         
         # 请求之间添加随机间隔，防止请求速度过快被封禁
         time.sleep(random.uniform(0.5, 1.5))
         
         return data, new_urls
+
+    @staticmethod
+    def get_app_details(response):
+        soup = BeautifulSoup(response.text, 'html.parser')
+    
+        # App Name
+        app_name = soup.find('h1', itemprop="name").span.text.strip()
+    
+        # Download Count
+        download_section = soup.find_all('div')
+        download_count = None
+        for section in download_section:
+            if "M+" in section.text or "K+" in section.text:
+                download_count = section.text
+                break
+    
+        # App Description
+        app_description = soup.find('div', {'data-g-id': "description"}).text.strip()
+    
+        # Extracting the rating score using a more robust method:
+        rating_div = soup.find('div', {'aria-label': re.compile(r"Rated")})
+        if rating_div:
+            potential_rating = rating_div.find_previous('div')
+            if potential_rating:
+                rating_score = potential_rating.get_text(strip=True)
+            else:
+                rating_score = "Not found"
+        else:
+            rating_score = "Not found"
+    
+        # Extracting similar apps names and IDs:
+        similar_apps_links = soup.select('a[href*="/store/apps/details?"]')
+        # Parsing the similar apps' IDs from the href attributes
+        similar_apps_ids = [link.get('href').split('=')[-1] for link in similar_apps_links]
+        similar_apps_names = [link.find('span', string=True).text for link in similar_apps_links if
+                              link.find('span', string=True)]
+    
+        # Creating the dictionary of similar apps using app IDs as keys and app names as values:
+        similar_apps_dict = dict(zip(similar_apps_ids, similar_apps_names))
+    
+        return {
+            'app_name': app_name,
+            'download_count': download_count,
+            'app_description': app_description,
+            'rating_score': rating_score,
+            'similar_apps_info': similar_apps_dict
+        }
 
 
 from cassandra.query import SimpleStatement
@@ -110,9 +158,18 @@ class DataProcessor:
                 logging.error(f"Failed to send URL {url} to Kafka: {e}")
             
     def store_data_in_cassandra(self, url, data):
-        query = f"INSERT INTO {self.cassandra_config['table']} (url, data) VALUES (%s, %s)"
+        # 动态生成CQL查询字符串
+        column_names = ', '.join(data.keys())
+        placeholders = ', '.join(['%s'] * len(data))
+        
+        # 注意，我在这里添加了url字段
+        query = f"INSERT INTO {self.cassandra_config['table']} (url, {column_names}) VALUES (%s, {placeholders})"
+        
+        # 执行CQL查询
         try:
-            self.session.execute(query, (url, data))
+            # 这里需要将url加入参数列表
+            params = [url] + list(data.values())
+            self.session.execute(query, params)
         except Exception as e:
             logging.error(f"Failed to store data for URL {url} in Cassandra: {e}")
 
@@ -163,10 +220,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
 
