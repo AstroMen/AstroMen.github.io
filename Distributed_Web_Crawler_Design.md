@@ -6,10 +6,45 @@
 
 ## Introduction
 
-In the age of vast digital content, web crawling becomes a fundamental process for data retrieval and aggregation. Traditional web crawling approaches often hit bottlenecks with scalability, resilience, and efficiency. Distributed web crawling systems, like the one detailed in this document, provide solutions to these challenges by harnessing the combined power and reliability of distributed databases and message brokers.
+In an era abundant with digital content, web crawlers have become pivotal for data retrieval and aggregation. However, traditional crawlers often face scalability, resilience, and efficiency challenges. The distributed web crawler system detailed in this article addresses these challenges by leveraging the capabilities of distributed databases and message brokers, facilitating the process of extracting app details from the Google Play store, transmitting them to Apache Kafka, and ultimately storing them in the Apache Cassandra database.
+
+## Design Goals
+
+1. Employ multi-threading for faster crawling.
+2. Use randomized user-agents and a proxy pool to circumvent bans.
+3. Implement Apache Kafka as a mid-level data storage mechanism, offering a buffering system ensuring no data loss.
+4. Store the scraped data in the Apache Cassandra database, ensuring high availability and scalability for voluminous data.
 
 ## Code Link
-[Click here to view the code]([https://afin.com/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
+[Click here to access the code]([https://afin.com/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
+
+## Sample Configuration File (config.yaml)
+
+```yaml
+spider:
+  user_agent: ["Mozilla/5.0 ...", "Mozilla/5.0 ..."]
+  max_threads: 10
+kafka:
+  bootstrap_servers: ["kafka-server1:9092", "kafka-server2:9092"]
+  retries: 5
+  topic_name: "webpage-urls"
+  group_id: "google-play-crawlers"
+cassandra:
+  hosts: ["cassandra-node1", "cassandra-node2"]
+  port: 9042
+  keyspace: "spider_data"
+  table: "app_data"
+proxy_pool: ["http://proxy1.com:8080", "http://proxy2.com:8080", ...]
+```
+All configurations, including user-agent, Kafka, Cassandra, and proxy pool, are read from the configuration file by the script.
+
+## How to Run
+
+To execute the script, ensure that the necessary libraries are installed and use the following command:
+```bash
+$ python spider.py config.yaml
+```
+Ensure the path to the configuration file is correct and adjust as per your setup.
 
 ## 1. Setting Up Resources in Cassandra and Kafka
 ### Cassandra:
