@@ -8,6 +8,9 @@
 
 在数字内容如此丰富的时代，网络爬虫成为数据检索和聚合的基础过程。传统的网络爬虫方法在可扩展性、弹性和效率上经常遇到瓶颈。本文详细描述的分布式网络爬虫系统，通过利用分布式数据库和消息代理的综合能力和可靠性，提供了解决这些挑战的方案。
 
+## 代码链接
+[点击这里查看代码]([https://afin.com/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
+
 ## 1. 在Cassandra和Kafka中创建资源
 ### Cassandra：
 #### 创建 Keyspace:
