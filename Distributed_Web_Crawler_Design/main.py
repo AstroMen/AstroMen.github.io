@@ -27,12 +27,14 @@ class Config:
     def cassandra_config(self):
         return self.config_data.get('cassandra', {})
 
+    @property
+    def proxy_pool(self):
+        return self.config_data.get('proxy_pool', [])
+
 
 from kafka import KafkaProducer, KafkaConsumer
 from cassandra.cluster import Cluster
 
-# Pool of proxy servers
-PROXY_POOL = ['http://proxy1.com:8080', 'http://proxy2.com:8080', ...]
 
 import random
 import re, requests
@@ -42,6 +44,7 @@ from bs4 import BeautifulSoup
 class URLFetcher:
     def __init__(self, user_agent_list):
         self.user_agent_list = user_agent_list
+        self.proxy_pool = proxy_pool
 
     def fetch(self, url):
         # Read IDs from file and generate URLs
@@ -53,14 +56,14 @@ class URLFetcher:
         user_agent = random.choice(self.user_agent_list)
         
         # Fetch web page using randomly selected User-Agent and proxy
-        proxy = random.choice(PROXY_POOL)
+        proxy = random.choice(self.proxy_pool)
 
         try:
             response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
             response.raise_for_status()  # This will raise an HTTPError for 4xx and 5xx status codes
         except requests.HTTPError as e:
             logging.error(f"Failed to fetch the URL {url} with error: {e}")
-            proxy = random.choice(PROXY_POOL)
+            proxy = random.choice(self.proxy_pool)
             logging.info(f"Retrying with a different proxy: {proxy}")
             response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
 
@@ -208,6 +211,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     config = Config(args.config_file)
-    fetcher = URLFetcher(config.spider_config['user_agent'])
+    fetcher = URLFetcher(config.spider_config['user_agent'], config.proxy_pool)
     processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher)
     processor.consume_urls_from_kafka(max_threads=config.spider_config['max_threads'])
