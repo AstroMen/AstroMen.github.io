@@ -8,6 +8,9 @@
 
 In the age of vast digital content, web crawling becomes a fundamental process for data retrieval and aggregation. Traditional web crawling approaches often hit bottlenecks with scalability, resilience, and efficiency. Distributed web crawling systems, like the one detailed in this document, provide solutions to these challenges by harnessing the combined power and reliability of distributed databases and message brokers.
 
+## Code Link
+[Click here to view the code]([https://afin.com/main/Distributed_Web_Crawler_Design](https://github.com/AstroMen/AstroMen.github.io/tree/main/Distributed_Web_Crawler_Design))
+
 ## 1. Setting Up Resources in Cassandra and Kafka
 ### Cassandra:
 #### Create Keyspace:
