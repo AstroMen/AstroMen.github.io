@@ -1,8 +1,10 @@
+import time
 import yaml
 import argparse
 import hashlib
 import logging
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 
 logging.basicConfig(level=logging.INFO)
@@ -26,47 +28,86 @@ class Config:
         return self.config_data.get('cassandra', {})
 
 
-from kafka import KafkaProducer
-from kafka import KafkaConsumer
+from kafka import KafkaProducer, KafkaConsumer
 from cassandra.cluster import Cluster
 
+PROXY_POOL = ['http://proxy1.com:8080', 'http://proxy2.com:8080', ...]
+
+import random
+import requests
+
+# 添加一个User-Agent列表
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134',
+    # ... 可以添加更多 ...
+]
+
 class URLFetcher:
-    def __init__(self, user_agent):
-        self.user_agent = user_agent
+    def __init__(self, user_agent_list):
+        self.user_agent_list = user_agent_list
 
     def fetch(self, url):
-        # 使用 user_agent 去抓取网页数据
-        # 伪代码：从网页中提取数据和新的URLs
+        # 从文件读取IDs并生成URLs
+        with open('ids.txt', 'r') as file:
+            ids = file.readlines()
+            new_urls = [f"https://play.google.com/store/apps/details?id={id.strip()}" for id in ids]
+
+        # 随机选择一个User-Agent
+        user_agent = random.choice(self.user_agent_list)
+        
+        # 使用随机选择的User-Agent和代理抓取网页
+        proxy = random.choice(PROXY_POOL)
+        response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
+
+        # 如果收到403，更换代理再次尝试
+        if response.status_code == 403:
+            logging.info(f"Proxy {proxy} blocked. Retrying with a different proxy.")
+            proxy = random.choice(PROXY_POOL)
+            response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
+
         data = f"Data from {url}"
-        new_urls = ["http://example.com/new1", "http://example.com/new2"]
+        
+        # 请求之间添加随机间隔，防止请求速度过快被封禁
+        time.sleep(random.uniform(0.5, 1.5))
+        
         return data, new_urls
 
 
+from cassandra.query import SimpleStatement
+from cassandra.policies import DowngradingConsistencyRetryPolicy
+
+
 class DataProcessor:
-    def __init__(self, kafka_config, cassandra_config):
+    def __init__(self, kafka_config, cassandra_config, fetcher):
         self.kafka_config = kafka_config
         self.cassandra_config = cassandra_config
-        # self.producer = KafkaProducer(bootstrap_servers=kafka_config['bootstrap_servers'])
+        self.fetcher = fetcher
+        # KafkaProducer settings
         self.producer = KafkaProducer(
             bootstrap_servers=kafka_config['bootstrap_servers'],
             retries=kafka_config.get('retries', 5),  # Add retries
             compression_type='gzip'  # Use gzip compression
         )
-        
-        # 对于Cassandra的重试机制，可以考虑使用cassandra的RetryPolicy
-
-        self.cluster = Cluster(cassandra_config['hosts'], port=cassandra_config['port'])
+        # Cassandra settings with retry policy
+        self.cluster = Cluster(
+            cassandra_config['hosts'], 
+            port=cassandra_config['port'],
+            default_retry_policy=DowngradingConsistencyRetryPolicy()
+        )
         self.session = self.cluster.connect(cassandra_config['keyspace'])
 
+
     def send_urls_to_kafka(self, urls):
-    for url in urls:
-        hash_key = hashlib.md5(url.encode()).hexdigest()
-        try:
-            # key: The partition in which messages are stored
-            self.producer.send(self.kafka_config['topic_name'], key=hash_key, value=url)
-            # self.producer.send(self.kafka_config['topic_name'], url)
-        except Exception as e:
-            logging.error(f"Failed to send URL {url} to Kafka: {e}")
+        for url in urls:
+            hash_key = hashlib.md5(url.encode()).hexdigest()
+            try:
+                # key: The partition in which messages are stored
+                self.producer.send(self.kafka_config['topic_name'], key=hash_key, value=url)
+                # self.producer.send(self.kafka_config['topic_name'], url)
+            except Exception as e:
+                logging.error(f"Failed to send URL {url} to Kafka: {e}")
             
     def store_data_in_cassandra(self, url, data):
         query = f"INSERT INTO {self.cassandra_config['table']} (url, data) VALUES (%s, %s)"
@@ -76,9 +117,8 @@ class DataProcessor:
             logging.error(f"Failed to store data for URL {url} in Cassandra: {e}")
 
     def process(self, url):
-        fetcher = URLFetcher(config.spider_config['user_agent'])
-        fetched_data, new_urls = fetcher.fetch(url)
-
+        fetched_data, new_urls = self.fetcher.fetch(url)
+        
         self.send_urls_to_kafka(new_urls)
         self.store_data_in_cassandra(url, fetched_data)
 
@@ -86,38 +126,47 @@ class DataProcessor:
 
     def handle_url(self, url):
         # 这个方法会在一个新线程中运行，用于处理从Kafka消费的每一个URL
+        # fetcher = URLFetcher(config.spider_config['user_agent'])    
         fetched_data, new_urls = self.fetcher.fetch(url)
         self.send_urls_to_kafka(new_urls)
         self.store_data_in_cassandra(url, fetched_data)
 
-    def consume_urls_from_kafka(self):
+    def consume_urls_from_kafka(self, max_threads=10):
         consumer = KafkaConsumer(
             self.kafka_config['topic_name'],
             bootstrap_servers=self.kafka_config['bootstrap_servers'],
             auto_offset_reset='earliest',  # 从最早的消息开始消费
             group_id='crawler-group'  # 使用group_id，可以在多个消费者之间自动均衡分区
         )
-
-        for message in consumer:
-            url = message.value
-            # 使用线程处理URL
-            threading.Thread(target=self.handle_url, args=(url,)).start()
-
-
+        # threading.Thread(target=self.handle_url, args=(url,)).start()  # 使用线程处理URL
+        
+        with ThreadPoolExecutor(max_workers=max_threads) as executor:
+            for message in consumer:
+                url = message.value
+                # 使用线程池处理URL
+                executor.submit(self.handle_url, url)
+                
 
 def main():
     parser = argparse.ArgumentParser(description="Distributed Crawler using Kafka and Cassandra.")
     parser.add_argument("-c", "--config", default="config.yaml", help="Path to the config.yaml file.")
     args = parser.parse_args()
-
     config = Config(args.config)
 
-    processor = DataProcessor(config.kafka_config, config.cassandra_config)
-    result = processor.process("http://example.com")
+    # 初始化URLFetcher时，传入User-Agent列表
+    fetcher = URLFetcher(USER_AGENTS)
+    processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher)  # 传入 fetcher
+    # result = processor.process("http://example.com")  # initialize to start crawler
+    # print(result)
     processor.consume_urls_from_kafka()
-
-    print(result)
 
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+
+
