@@ -33,7 +33,11 @@ Then, create the table:
 ```cql
 CREATE TABLE IF NOT EXISTS web_content (
     url TEXT PRIMARY KEY,
-    data TEXT
+    app_name TEXT,
+    download_count TEXT,
+    app_description TEXT,
+    rating_score TEXT,
+    similar_apps_info TEXT  -- Store as JSON string
 );
 ```
 Here, we made a table named web_content with url as its primary key.
