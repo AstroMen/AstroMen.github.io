@@ -1,0 +1,5 @@
+com.deepl.mobiletranslator
+com.ebay.mobile
+com.microsoft.teams
+us.zoom.zrc
+com.skype.raider
