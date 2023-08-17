@@ -67,7 +67,7 @@ class URLFetcher:
             logging.info(f"Retrying with a different proxy: {proxy}")
             response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
 
-        data = self.get_app_details(response)
+        data = self.get_app_details(response.text)
         
         # Serialize similar_apps_info into a JSON string
         data['similar_apps_info'] = json.dumps(data['similar_apps_info'])
@@ -78,50 +78,89 @@ class URLFetcher:
         return data, new_urls
 
     @staticmethod
-    def get_app_details(response):
+    def get_app_details(html_content):
         # Extract app details from the webpage content using BeautifulSoup
-        soup = BeautifulSoup(response.text, 'html.parser')
-    
-        # Extract App Name
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # App Name
         app_name = soup.find('h1', itemprop="name").span.text.strip()
     
-        # Extract Download Count
-        download_section = soup.find_all('div')
-        download_count = None
-        for section in download_section:
-            if "M+" in section.text or "K+" in section.text:
-                download_count = section.text
-                break
+        # Download Count
+        download_div = soup.find('div', string='Downloads')
+        if download_div:
+            # Finding the parent div
+            parent_div = download_div.find_parent()
+            if parent_div:
+                # Extracting the nested div's text (i.e., "1B+")
+                download_count = parent_div.find('div').text
+            else:
+                download_count = "Not found"
+        else:
+            download_count = "Not found"
     
-        # Extract App Description
+        # App Description
         app_description = soup.find('div', {'data-g-id': "description"}).text.strip()
     
-        # Extract Rating Score
-        rating_div = soup.find('div', {'aria-label': re.compile(r"Rated")})
+        # Rating Score (Modified as per requirement)
+        rating_div = soup.find('div', itemprop="starRating")
         if rating_div:
-            potential_rating = rating_div.find_previous('div')
-            if potential_rating:
-                rating_score = potential_rating.get_text(strip=True)
-            else:
-                rating_score = "Not found"
+            rating_score = rating_div.text.strip()
         else:
             rating_score = "Not found"
     
-        # Extract similar apps names and IDs
+        # Extracting similar apps names and IDs:
         similar_apps_links = soup.select('a[href*="/store/apps/details?"]')
-        similar_apps_ids = [link.get('href').split('=')[-1] for link in similar_apps_links]
-        similar_apps_names = [link.find('span', string=True).text for link in similar_apps_links if
-                              link.find('span', string=True)]
+        similar_apps = {link.get('href').split('=')[-1]: link.find('span', string=True).text for link in similar_apps_links
+                        if link.find('span', string=True)}
     
-        # Create a dictionary of similar apps using app IDs as keys and app names as values
-        similar_apps_dict = dict(zip(similar_apps_ids, similar_apps_names))
+        # Extracting App Category
+        app_categories_links = soup.select('a[aria-label][href*="/store/apps/category/"]')
+        app_categories = [link.get('aria-label') for link in app_categories_links]
+    
+        # Extracting Developer Name
+        developer_div = soup.find('div', class_='Vbfug auoIOc')
+        developer_name = developer_div.find('span').text if developer_div else "Not found"
+    
+        # Extracting Review Count
+        review_count_div = soup.find('div', class_='g1rdde')
+        review_count = review_count_div.text.strip() if review_count_div else "Not found"
+    
+        # Extract the relevant script tag
+        script_tags = soup.find_all('script', type="application/ld+json")
+        relevant_script_content = None
+        for script in script_tags:
+            json_data = json.loads(script.string)
+            if json_data.get("@type") == "SoftwareApplication" and json_data.get("name") == app_name:
+                relevant_script_content = json_data
+                break
+        # Extract the necessary details from the relevant script content
+        if relevant_script_content:
+            extracted_data = {
+                "name": relevant_script_content.get("name", "N/A"),
+                "url": relevant_script_content.get("url", "N/A"),
+                "description": relevant_script_content.get("description", "N/A"),
+                "operatingSystem": relevant_script_content.get("operatingSystem", "N/A"),
+                "applicationCategory": relevant_script_content.get("applicationCategory", "N/A"),
+                "contentRating": relevant_script_content.get("contentRating", "N/A"),
+                "author": relevant_script_content.get("author", {}).get("name", "N/A"),
+                "ratingValue": relevant_script_content.get("aggregateRating", {}).get("ratingValue", "N/A"),
+                "ratingCount": relevant_script_content.get("aggregateRating", {}).get("ratingCount", "N/A"),
+                "price": relevant_script_content.get("offers", [{}])[0].get("price", "N/A"),
+                "priceCurrency": relevant_script_content.get("offers", [{}])[0].get("priceCurrency", "N/A"),
+            }
+        else:
+            extracted_data = {}
     
         return {
-            'app_name': app_name,
-            'download_count': download_count,
-            'app_description': app_description,
-            'rating_score': rating_score,
-            'similar_apps_info': similar_apps_dict
+            'App Name': app_name,
+            'Download Count': download_count,
+            'App Description': app_description,
+            'Rating Score': rating_score,
+            'Similar Apps': similar_apps,
+            'App Categories': app_categories,
+            'Developer Name': developer_name,
+            'Review Count': review_count,
+            'More App Data': extracted_data,
         }
 
 
