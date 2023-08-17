@@ -38,6 +38,26 @@ proxy_pool: ["http://proxy1.com:8080", "http://proxy2.com:8080", ...]
 ```
 此脚本从配置文件读取所有配置信息，包括用户代理、Kafka、Cassandra和代理池配置。
 
+## 环境设置
+### 安装与启动Zookeeper：
+1. 下载Zookeeper:
+```bash
+wget https://downloads.apache.org/zookeeper/zookeeper-3.7.0/zookeeper-3.7.0.tar.gz
+```
+2. 解压:
+```bash
+tar -xvzf zookeeper-3.7.0.tar.gz
+cd zookeeper-3.7.0
+```
+3. 创建配置文件:
+```bash
+cp conf/zoo_sample.cfg conf/zoo.cfg
+```
+4. 启动Zookeeper:
+```bash
+bin/zkServer.sh start
+```
+
 ## 运行方式
 
 要运行此脚本，请确保已安装所需的依赖库，并使用以下命令运行：
