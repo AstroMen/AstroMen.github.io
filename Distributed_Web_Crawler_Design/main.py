@@ -14,6 +14,8 @@ class Config:
     def __init__(self, config_file):
         with open(config_file, 'r') as file:
             self.config_data = yaml.safe_load(file)
+        # 1. 服务启动时：注册到Zookeeper
+        self.zk_service = ZookeeperService("localhost:2181")
 
     @property
     def spider_config(self):
@@ -169,10 +171,11 @@ from cassandra.policies import DowngradingConsistencyRetryPolicy
 
 
 class DataProcessor:
-    def __init__(self, kafka_config, cassandra_config, fetcher):
+    def __init__(self, kafka_config, cassandra_config, fetcher, config):
         self.kafka_config = kafka_config
         self.cassandra_config = cassandra_config
         self.fetcher = fetcher
+        self.config = config
         
         # Set up KafkaProducer with settings
         self.producer = KafkaProducer(
@@ -190,6 +193,12 @@ class DataProcessor:
         self.session = self.cluster.connect(cassandra_config['keyspace'])
 
     def send_urls_to_kafka(self, urls):
+        # Check if the Kafka service is online
+        kafka_service = self.config.zk_service.discover_service('kafka_service_name')
+        if not kafka_service:
+            logging.error("Kafka service is not online or not registered.")
+            return
+            
         # Send fetched URLs to Kafka
         for url in urls:
             hash_key = hashlib.md5(url.encode()).hexdigest()
@@ -200,6 +209,12 @@ class DataProcessor:
                 logging.error(f"Failed to send URL {url} to Kafka. Error: {e}")
 
     def store_data_in_cassandra(self, url, data):
+        # Check if the Cassandra service is online
+        cassandra_service = self.config.zk_service.discover_service('cassandra_service_name')
+        if not cassandra_service:
+            logging.error("Cassandra service is not online or not registered.")
+            return
+            
         # Dynamically generate the CQL query string
         column_names = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
@@ -244,12 +259,39 @@ class DataProcessor:
         # 2. threading.Thread(target=self.handle_url, args=(url,)).start()  # Use threading to handle urls
 
 
+import atexit
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Web scraper and data processor for Google Play store apps.")
     parser.add_argument("config_file", help="Path to the configuration file in YAML format.")
     args = parser.parse_args()
 
+    # Initialize configuration
     config = Config(args.config_file)
+
+    # Register our service to ZooKeeper when the program starts 
+    service_path = "/my_service/spider"  # Change to an appropriate service path
+    service_value = "Service for web scraping Google Play store apps"
+    service_identifier = config.zk_service.register_service(service_path, service_value)
+
+    # Use atexit to ensure our service is deregistered when the program stops or crashes
+    atexit.register(config.zk_service.remove_service, service_path, service_identifier)
+
+    # Discover dependent services (like Kafka or Cassandra) from ZooKeeper
+    kafka_service = config.zk_service.discover_service('kafka_service_name')
+    cassandra_service = config.zk_service.discover_service('cassandra_service_name')
+
+    # Ensure both services are discovered before proceeding
+    if not kafka_service:
+        logging.error("Kafka service is not online or not registered.")
+        exit(1)
+
+    if not cassandra_service:
+        logging.error("Cassandra service is not online or not registered.")
+        exit(1)
+
+    # If both services are discovered, proceed with the normal logic
     fetcher = URLFetcher(config.spider_config['user_agent'], config.proxy_pool)
-    processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher)
+    processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher, config)
     processor.consume_urls_from_kafka(max_threads=config.spider_config['max_threads'])
+
