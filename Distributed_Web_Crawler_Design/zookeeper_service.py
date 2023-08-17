@@ -27,9 +27,10 @@ class ZookeeperService:
             data, _ = self.zk.get(path)
             return data.decode()
 
-    def remove_service(self, path):
-        """Remove a registered service."""
-        self.zk.delete(path, recursive=True)
-
-    def close(self):
+    def remove_service(self, service_name, identifier):
+        node_path = f"/{service_name}/{identifier}"
+        if self.zk.exists(node_path):
+            self.zk.delete(node_path, recursive=True)
+        # Stopping the ZooKeeper client after removing the service
         self.zk.stop()
+
