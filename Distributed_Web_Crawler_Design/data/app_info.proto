@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+message AppInfo {
+    string app_name = 1;                           // App Name
+    string download_count = 2;                     // Download Count
+    string app_description = 3;                    // App Description
+    float rating_score = 4;                        // Rating Score
+    map<string, string> similar_apps = 5;          // Similar Apps {string: string}
+    repeated string app_categories = 6;            // App Categories (list of strings)
+    string developer_name = 7;                     // Developer Name
+    string review_count = 8;                       // Review Count
+    ExtractedData more_app_data = 9;               // More App Data
+}
+
+message ExtractedData {
+    string name = 1;                               // App Name
+    string url = 2;                                // App URL
+    string description = 3;                        // Description
+    string operatingSystem = 4;                    // Operating System
+    string applicationCategory = 5;                // Application Category
+    string contentRating = 6;                      // Content Rating
+    string author = 7;                             // Author
+    float ratingValue = 8;                         // Rating Value
+    int64 ratingCount = 9;                         // Rating Count
+    float price = 10;                              // Price
+    string priceCurrency = 11;                     // Price Currency
+}
