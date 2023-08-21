@@ -6,6 +6,9 @@ import hashlib
 import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
+
+from proxy_manager import ProxyManager
+from url_fetcher import URLFetcher
 from zookeeper_service import ZookeeperService
 
 logging.basicConfig(level=logging.INFO)
@@ -37,143 +40,6 @@ class Config:
 
 from kafka import KafkaProducer, KafkaConsumer
 from cassandra.cluster import Cluster
-
-import random
-import re, requests
-from bs4 import BeautifulSoup
-
-
-class URLFetcher:
-    def __init__(self, user_agent_list, proxy_pool):
-        self.user_agent_list = user_agent_list
-        self.proxy_pool = proxy_pool
-        self.base_url = 'https://play.google.com/store/apps/details?id={}'
-
-    def fetch_single_url(self, url):
-        # Randomly select a User-Agent
-        user_agent = random.choice(self.user_agent_list)
-
-        # Fetch web page using randomly selected User-Agent and proxy
-        proxy = random.choice(self.proxy_pool)
-
-        try:
-            response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
-            response.raise_for_status()  # This will raise an HTTPError for 4xx and 5xx status codes
-        except requests.HTTPError as e:
-            logging.error(f"Failed to fetch the URL {url} with error: {e}")
-            proxy = random.choice(self.proxy_pool)
-            logging.info(f"Retrying with a different proxy: {proxy}")
-            response = requests.get(url, proxies={"http": proxy, "https": proxy}, headers={'User-Agent': user_agent})
-
-        data = self.get_app_details(response.text)
-
-        # Serialize similar_apps_info into a JSON string
-        data['similar_apps_info'] = json.dumps(data['similar_apps_info'])
-
-        # Add a random delay between requests to avoid being banned for rapid requests
-        time.sleep(random.uniform(0.5, 1.5))
-        return data
-
-    def fetch(self, max_threads=10):
-        new_urls = []
-        with open('ids.txt', 'r') as f:
-            for line in f:
-                new_urls.append(self.base_url.format(line.strip()))
-
-        # 使用线程池来并发爬取
-        with ThreadPoolExecutor(max_threads) as executor:
-            results = list(executor.map(self.fetch_single_url, new_urls))
-
-        return results
-
-    @staticmethod
-    def get_app_details(html_content):
-        # Extract app details from the webpage content using BeautifulSoup
-        soup = BeautifulSoup(html_content, 'html.parser')
-
-        # App Name
-        app_name = soup.find('h1', itemprop="name").span.text.strip()
-
-        # Download Count
-        download_div = soup.find('div', string='Downloads')
-        if download_div:
-            # Finding the parent div
-            parent_div = download_div.find_parent()
-            if parent_div:
-                # Extracting the nested div's text (i.e., "1B+")
-                download_count = parent_div.find('div').text
-            else:
-                download_count = "Not found"
-        else:
-            download_count = "Not found"
-
-        # App Description
-        app_description = soup.find('div', {'data-g-id': "description"}).text.strip()
-
-        # Rating Score (Modified as per requirement)
-        rating_div = soup.find('div', itemprop="starRating")
-        if rating_div:
-            rating_score = rating_div.text.strip()
-        else:
-            rating_score = "Not found"
-
-        # Extracting similar apps names and IDs:
-        similar_apps_links = soup.select('a[href*="/store/apps/details?"]')
-        similar_apps = {link.get('href').split('=')[-1]: link.find('span', string=True).text for link in
-                        similar_apps_links
-                        if link.find('span', string=True)}
-
-        # Extracting App Category
-        app_categories_links = soup.select('a[aria-label][href*="/store/apps/category/"]')
-        app_categories = [link.get('aria-label') for link in app_categories_links]
-
-        # Extracting Developer Name
-        developer_div = soup.find('div', class_='Vbfug auoIOc')
-        developer_name = developer_div.find('span').text if developer_div else "Not found"
-
-        # Extracting Review Count
-        review_count_div = soup.find('div', class_='g1rdde')
-        review_count = review_count_div.text.strip() if review_count_div else "Not found"
-
-        # Extract the relevant script tag
-        script_tags = soup.find_all('script', type="application/ld+json")
-        relevant_script_content = None
-        for script in script_tags:
-            json_data = json.loads(script.string)
-            if json_data.get("@type") == "SoftwareApplication" and json_data.get("name") == app_name:
-                relevant_script_content = json_data
-                break
-        # Extract the necessary details from the relevant script content
-        if relevant_script_content:
-            extracted_data = {
-                "name": relevant_script_content.get("name", "N/A"),
-                "url": relevant_script_content.get("url", "N/A"),
-                "description": relevant_script_content.get("description", "N/A"),
-                "operatingSystem": relevant_script_content.get("operatingSystem", "N/A"),
-                "applicationCategory": relevant_script_content.get("applicationCategory", "N/A"),
-                "contentRating": relevant_script_content.get("contentRating", "N/A"),
-                "author": relevant_script_content.get("author", {}).get("name", "N/A"),
-                "ratingValue": relevant_script_content.get("aggregateRating", {}).get("ratingValue", "N/A"),
-                "ratingCount": relevant_script_content.get("aggregateRating", {}).get("ratingCount", "N/A"),
-                "price": relevant_script_content.get("offers", [{}])[0].get("price", "N/A"),
-                "priceCurrency": relevant_script_content.get("offers", [{}])[0].get("priceCurrency", "N/A"),
-            }
-        else:
-            extracted_data = {}
-
-        return {
-            'App Name': app_name,
-            'Download Count': download_count,
-            'App Description': app_description,
-            'Rating Score': rating_score,
-            'Similar Apps': similar_apps,
-            'App Categories': app_categories,
-            'Developer Name': developer_name,
-            'Review Count': review_count,
-            'More App Data': extracted_data,
-        }
-
-
 from cassandra.query import SimpleStatement
 from cassandra.policies import DowngradingConsistencyRetryPolicy
 
@@ -237,10 +103,25 @@ class DataProcessor:
         except Exception as e:
             logging.error(f"Failed to store data for URL {url} in Cassandra. Error: {e}")
 
+    # def process(self, url):
+    #     fetched_data, new_urls = self.fetcher.fetch(url)
+    #     self.send_urls_to_kafka(new_urls)
+    #     self.store_data_in_cassandra(url, fetched_data)
+    #
+    #     return f"Processed and stored data for {url}"
+
+    # def handle_url(self, url):
+    #     # This method is run in a new thread for each URL consumed from Kafka
+    #     fetched_data, new_urls = self.fetcher.fetch(url)
+    #     self.send_urls_to_kafka(new_urls)
+    #     self.store_data_in_cassandra(url, fetched_data)
+
     def handle_url(self, url):
         # This method is run in a new thread for each URL consumed from Kafka
         fetched_results = self.fetcher.fetch()
         for fetched_data, new_urls in fetched_results:
+            if fetched_data is None:
+                logging.error(f"Failed to fetch and process {url} after retries.")
             self.send_urls_to_kafka(new_urls)
             self.store_data_in_cassandra(url, fetched_data)
 
@@ -293,6 +174,11 @@ if __name__ == '__main__':
         exit(1)
 
     # If both services are discovered, proceed with the normal logic
-    fetcher = URLFetcher(config.spider_config['user_agent'], config.proxy_pool)
+    proxy_manager = ProxyManager(config.proxy_pool)
+    fetcher = URLFetcher(config.spider_config['user_agent'], proxy_manager)
+
+    # Start periodic validation in a separate thread
+    threading.Thread(target=proxy_manager.run_periodic_validation).start()
+
     processor = DataProcessor(config.kafka_config, config.cassandra_config, fetcher, config)
     processor.consume_urls_from_kafka(max_threads=config.spider_config['max_threads'])
