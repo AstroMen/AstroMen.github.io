@@ -16,3 +16,8 @@ minima:
 
 # Permalink structure
 permalink: /:year/:month/:day/:title/
+
+gems:
+  - jekyll-paginate
+
+paginate: 2  # total posts for each page

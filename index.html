@@ -949,13 +949,13 @@
                 </header>
                 <section class="blog-posts">
                     <ul class="blog-posts-list">
-                        {% for post in site.posts %}
+                        {% for post in paginator.posts %}
                             {% if post.path contains '-CN.md' %}
                             {% else %}
                             <li class="blog-post-item">
                                 <h3 class="blog-post-item-title"><a href="{{ post.url }}">{{ post.title }}</a></h3>
                                 <div class="blog-post-item-abstract">
-                                    <p>{{ post.excerpt }}</p>
+                                    <p>{{ post.content | strip_html | truncate:200 }}</p>
                                 </div>
                                 {% if post.tags %}
                                     <div class="blog-post-item-tags">
@@ -972,6 +972,21 @@
                     </ul>
                 </section>
             </article>
+            <!-- 分页控件 -->
+            {% if paginator.total_pages > 1 %}
+                <ul class="pager">
+                    {% if paginator.previous_page %}
+                        <li class="previous">
+                            <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
+                        </li>
+                    {% endif %}
+                    {% if paginator.next_page %}
+                        <li class="next">
+                            <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
 
 
             <!-- <article class="blog" data-page="blog">
