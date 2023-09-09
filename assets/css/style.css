@@ -1391,6 +1391,46 @@ textarea.form-input::-webkit-resizer {
   background: var(--bg-gradient-jet);
 }
 
+
+/*-----------------------------------*\
+  #PAGER
+\*-----------------------------------*/
+
+.pager {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.pager li {
+    margin: 0;
+}
+
+.pager a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #FF8033;
+    border-radius: 4px; /* 轻微圆角 */
+    transition: background-color 0.3s; /* 过渡效果 */
+}
+
+.pager a:hover {
+    background-color: #E76F00; /* deeper orange */
+}
+
+.pager .previous {
+
+}
+
+.pager .next {
+
+}
+
+
 /*-----------------------------------*\
   #RESPONSIVE
 \*-----------------------------------*/
