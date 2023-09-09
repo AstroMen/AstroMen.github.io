@@ -1,3 +1,11 @@
+---
+layout: post
+title:  "Use Pin Run Spec Benchmark"
+date:   2023-09-07
+categories: jekyll update
+tags: 
+  - Benchmark Test 
+---
 
 ### Install apt package
 ```shell
