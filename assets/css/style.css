@@ -1165,6 +1165,25 @@ main {
     margin: 10px 0;
 }
 
+.blog-post-item-tags {
+    margin: 10px 0;
+    color: #543F32; /* 使用与摘要相同的颜色 */
+}
+
+.blog-post-item-tags p {
+    margin: 0; /* 移除段落的默认边距 */
+}
+
+.blog-post-tag {
+    display: inline-block;
+    background: orange; /* 使用与标题相同的橙色背景 */
+    color: #fff; /* 白色文本 */
+    padding: 2px 8px; /* 添加一些填充 */
+    border-radius: 5px; /* 使标签的角变圆 */
+    margin-right: 5px; /* 在标签之间添加一些空间 */
+    font-size: 0.9em; /* 稍微减小字体大小 */
+}
+
 /*
 
 .blog-post-item > a {
@@ -1905,7 +1924,7 @@ textarea.form-input::-webkit-resizer {
   .navbar-link.active {
     color: var(--orange-yellow-crayola);
   }
-  
+
   /**
    * ABOUT
    */
