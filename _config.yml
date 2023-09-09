@@ -1,0 +1,18 @@
+title: My Portfolio
+description: Welcome to my online portfolio.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://astromen.github.io/" # the base hostname & protocol for your site
+
+github_username:  AstroMen
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+
+# Minima theme settings
+minima:
+  skin: solarized # example of theme specific settings
+
+# Permalink structure
+permalink: /:year/:month/:day/:title/
