@@ -63,6 +63,7 @@
   --vegas-gold: hsl(45, 54%, 58%);
   --light-gray: hsl(0, 0%, 84%);
   --light-gray-70: hsla(0, 0%, 84%, 0.7);
+  --intermediate-gray: #f0f0f0;
   --bittersweet-shimmer: hsl(0, 43%, 51%);
 
   /**
@@ -1120,15 +1121,55 @@ main {
   #BLOG
 \*-----------------------------------*/
 
-/*.blog-posts {
+.blog-posts {
   margin-bottom: 10px;
 }
 
 .blog-posts-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
 }
+
+.blog-post-item {
+    /*background: var(--intermediate-gray);*/  /* 保持与主题一致的深色背景 */
+    background: var(--light-gray-70);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-4);
+    width: 85%;  /* 这样可以保证所有项具有相同的宽度 */
+}
+
+.blog-post-item-title {
+    color: orange; /* 标题的橙色 */
+    font-weight: bold; /* 高亮（加粗） */
+}
+
+.blog-post-item-title a {
+    text-decoration: none; /* 移除链接的下划线 */
+    color: inherit; /* 使链接继承标题的颜色 */
+}
+
+.blog-post-item-title a:hover {
+    text-decoration: underline;
+    color: #FF8033; /* 悬停时改变颜色，这里设置为深橙色 */
+}
+
+.blog-post-item-abstract {
+    color: #543F32 !important;
+}
+
+/* 添加一些边距来美化内容 */
+.blog-post-item-title, 
+.blog-post-item-abstract {
+    margin: 10px 0;
+}
+
+.navbar-link.active {
+  color: var(--orange-yellow-crayola);
+}
+
+/*
 
 .blog-post-item > a {
   position: relative;
@@ -1206,8 +1247,8 @@ main {
   font-size: var(--fs-6);
   font-weight: var(--fw-300);
   line-height: 1.6;
-}
-*/
+}*/
+
 /*-----------------------------------*\
   #CONTACT
 \*-----------------------------------*/
