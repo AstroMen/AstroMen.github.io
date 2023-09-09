@@ -1,13 +1,21 @@
-# Distributed Web Crawler Design
-<p align="center">
-    <br> English | <a href="Distributed_Web_Crawler_Design-CN.md">中文</a>
-</p>
-    Using Kafka and Cassandra
+---
+layout: post
+title:  "Distributed Web Crawler Design"
+date:   2023-08-14
+categories: jekyll update
+tags: 
+  - System Design 
+---
 
 ## Introduction
 
 In an era abundant with digital content, web crawlers have become pivotal for data retrieval and aggregation. However, traditional crawlers often face scalability, resilience, and efficiency challenges. The distributed web crawler system detailed in this article addresses these challenges by leveraging the capabilities of distributed databases and message brokers, facilitating the process of extracting app details from the Google Play store, transmitting them to Apache Kafka, and ultimately storing them in the Apache Cassandra database.
 
+<p align="center">
+    <br> English | <a href="Distributed_Web_Crawler_Design-CN.md">中文</a>
+</p>
+    Using Kafka and Cassandra
+    
 ## Design Goals
 
 1. Employ multi-threading for faster crawling.
