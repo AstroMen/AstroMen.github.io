@@ -3,6 +3,9 @@ layout: post
 title:  "Distributed Web Crawler Design"
 date:   2023-09-01 10:00:00 +0800
 categories: jekyll update
+tags: 
+  - Web Crawling 
+  - Distributed Systems 
 ---
 
 # Distributed Web Crawler Design
