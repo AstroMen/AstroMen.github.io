@@ -1165,10 +1165,6 @@ main {
     margin: 10px 0;
 }
 
-.navbar-link.active {
-  color: var(--orange-yellow-crayola);
-}
-
 /*
 
 .blog-post-item > a {
@@ -1815,10 +1811,14 @@ textarea.form-input::-webkit-resizer {
 
   /* portfolio and blog grid */
 
-  .project-list,
-  .blog-posts-list {
+  .project-list {
     grid-template-columns: 1fr 1fr;
   }
+
+/*  .project-list,
+  .blog-posts-list {
+    grid-template-columns: 1fr 1fr;
+  }*/
 
   /**
    * CONTACT
@@ -1902,6 +1902,10 @@ textarea.form-input::-webkit-resizer {
     font-weight: var(--fw-500);
   }
 
+  .navbar-link.active {
+    color: var(--orange-yellow-crayola);
+  }
+  
   /**
    * ABOUT
    */
