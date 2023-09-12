@@ -113,8 +113,13 @@ g++ -m32 -o demo demo.cpp
 Edit a pin tool:
 ```cpp
 #include "pin.H"
-#include <iostream>
+#include <fstream>
+
+KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
+    "o", "pin_output.log", "specify output file name");
+
 UINT64 icount = 0;
+std::ofstream outFile;
 
 VOID docount() { icount++; }
 
@@ -123,7 +128,13 @@ VOID Instruction(INS ins, VOID *v) {
 }
 
 VOID Fini(INT32 code, VOID *v) {
-    std::cerr << "Count " << icount << std::endl;
+    outFile.open(KnobOutputFile.Value().c_str(), std::ios::out);
+    if(outFile.is_open()) {
+        outFile << "Count " << icount << std::endl;
+        outFile.close();
+    } else {
+        std::cerr << "Could not open log file" << std::endl;
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -142,7 +153,7 @@ Compile this tool and run pin:
 cd source/tools/MyPinTool/
 make clean
 make TARGET=ia32
-pin -t obj-ia32/MyPinToolForTest.so -- /home/luyao/research/test/demo
+pin -t obj-ia32/MyPinToolForTest.so -o my_log_file.log -- ./demo
 ```
 
 ### Result
