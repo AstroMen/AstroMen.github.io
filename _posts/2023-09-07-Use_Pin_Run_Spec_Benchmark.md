@@ -114,8 +114,10 @@ Edit a pin tool:
 ```cpp
 #include "pin.H"
 #include <fstream>
+#include <iostream>
+#include <string>
 
-KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
+KNOB<std::string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
     "o", "pin_output.log", "specify output file name");
 
 UINT64 icount = 0;
