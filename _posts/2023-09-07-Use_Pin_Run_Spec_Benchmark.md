@@ -7,6 +7,7 @@ tags:
   - Benchmark Test 
 ---
 
+## Build SPEC2006 benchmark environment
 ### Install apt package
 ```shell
 sudo apt update
@@ -73,4 +74,81 @@ Benchmarks      Ref.   Run Time     Ratio       Ref.   Run Time     Ratio
       set: fp
 
 The log for this run is in /home/user/SPEC2006/result/CPU2006.019.log
+```
+
+## Injection by Intel Pin
+### Installation
+```
+sudo apt update
+sudo apt install gcc-multilib g++-multilib libc6-dev-i386
+```
+
+### Write a demo as a target
+``` cpp
+#include <iostream>
+
+void greet();
+int add(int a, int b);
+
+int main() {
+    greet();
+    int result = add(3, 4);
+    std::cout << "The result of the addition is: " << result << std::endl;
+    return 0;
+}
+
+void greet() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+int add(int a, int b) {
+    return a + b;
+}
+```
+```
+g++ -m32 -o demo demo.cpp
+```
+
+### Run pin to inject
+Edit a pin tool:
+```cpp
+#include "pin.H"
+#include <iostream>
+UINT64 icount = 0;
+
+VOID docount() { icount++; }
+
+VOID Instruction(INS ins, VOID *v) {
+    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
+}
+
+VOID Fini(INT32 code, VOID *v) {
+    std::cerr << "Count " << icount << std::endl;
+}
+
+int main(int argc, char *argv[]) {
+    if (PIN_Init(argc, argv)) return -1;
+
+    INS_AddInstrumentFunction(Instruction, 0);
+    PIN_AddFiniFunction(Fini, 0);
+
+    PIN_StartProgram();
+    return 0;
+}
+```
+
+Compile this tool and run pin:
+```
+cd source/tools/MyPinTool/
+make clean
+make TARGET=ia32
+pin -t obj-ia32/MyPinToolForTest.so -- /home/luyao/research/test/demo
+```
+
+### Result
+```
+$ pin -t obj-ia32/MyPinToolForTest.so -- /home/luyao/research/test/demo
+Hello, World!
+The result of the addition is: 7
+Count 2367254
 ```
