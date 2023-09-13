@@ -160,8 +160,22 @@ pin -t obj-ia32/MyPinToolForTest.so -o my_log_file.log -- ./demo
 
 ### Result
 ```
-$ pin -t obj-ia32/MyPinToolForTest.so -- /home/luyao/research/test/demo
+$ pin -t obj-ia32/MyPinToolForTest.so -- ~/research/test/demo
 Hello, World!
 The result of the addition is: 7
 Count 2367254
+```
+
+```
+pin -t ~/research/pin/source/tools/MyPinToolForCallAddr/obj-ia32/ToolCallAddr.so -o ~/research/pin/source/tools/MyPinToolForCallAddr/pin_output_bzip2.log -- ~/research/SPEC2006/benchspec/CPU2006/401.bzip2/exe/bzip2_base.amd64-m32-gcc42-nn
+```
+
+## Use specinvoke to inject
+```
+pin -t ~/research/pin/source/tools/MyPinToolForTest/obj-ia32/MyPinToolForTest.so -o ~/research/pin/source/tools/MyPinToolForTest/pin_output_bzip2_specinvoke_amd.log -- specinvoke -c Example-linux32-i386-gcc42 -d ~/research/SPEC2006/benchspec/CPU2006/401.bzip2/exe/ -e error.log -o output.log -f instructions.txt
+```
+
+instructions.txt
+```
+~/research/SPEC2006/benchspec/CPU2006/401.bzip2/exe/bzip2_base.amd64-m32-gcc42-nn -i ~/research/SPEC2006/benchspec/CPU2006/401.bzip2/data/all/input/input.combined
 ```
