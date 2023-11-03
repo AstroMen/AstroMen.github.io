@@ -13,12 +13,12 @@ This guide provides instructions for setting up a Kubernetes cluster on Ubuntu u
 
 ## Prerequisites
 
-One or more machines running Ubuntu 18.04 or later
-Each machine has at least:
-2 CPUs
-2GB RAM
-Network connectivity between machines
-Root privileges on each machine
+One or more machines running Ubuntu 18.04 or later  
+Each machine has at least:  
+2 CPUs  
+2GB RAM  
+Network connectivity between machines  
+Root privileges on each machine  
 
 ## Comprehensive Guide to Setting Up a Kubernetes Cluster Using Kubeadm
 
@@ -52,6 +52,35 @@ On the master node, initialize the cluster:
 
 ```
 sudo kubeadm init
+```
+
+Kubernetes control-plane has initialized successfully:
+```
+......
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.218.12:6443 --token 81n1ak.ozgrdyuuk1oa7b99 \
+	--discovery-token-ca-cert-hash sha256:b08f7cdd57b3f40c456c293f6479b5523801f2632d95c2729d476e54e6f17790 
 ```
 
 Note: If you are using a single-node cluster, after initializing the cluster, you need to allow workloads to be scheduled on the master node:
