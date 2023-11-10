@@ -236,5 +236,6 @@ For further information and detailed guidance, please refer to the following res
 
 - [Kore.ai Web SDK GitHub Repository](https://github.com/Koredotcom/web-kore-sdk/blob/master/README.md): Comprehensive documentation and examples for the Kore.ai Web SDK.
 - [Kore.ai Botkit SDK Functions](https://developer.kore.ai/docs/bots/sdks/functions-for-the-botkit-sdk/): Detailed descriptions of functions available in the Kore.ai Botkit SDK, along with usage examples and best practices.
+- [Kore.ai IVR Integration Guide](https://developer.kore.ai/v8-0/docs/bots/advanced-topics/ivr-integration/ivr-integration/#): Detailed information on integrating IVR systems with Kore.ai.
 
 These resources provide valuable insights and instructions for effectively utilizing Kore.ai's capabilities in your conversational IVR and Node.js integrations.
