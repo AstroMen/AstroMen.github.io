@@ -230,3 +230,11 @@ Add metadata tags to users, messages, and sessions for improved tracking and man
 
 These supplementary features can be implemented based on your specific business logic and needs. You may need to write corresponding event handling logic based on user behavior or other triggering conditions. Ensure to follow best practices in implementing these features, such as error handling, logging, and secure communication with the Kore.ai platform.
 
+## References
+
+For further information and detailed guidance, please refer to the following resources:
+
+- [Kore.ai Web SDK GitHub Repository](https://github.com/Koredotcom/web-kore-sdk/blob/master/README.md): Comprehensive documentation and examples for the Kore.ai Web SDK.
+- [Kore.ai Botkit SDK Functions](https://developer.kore.ai/docs/bots/sdks/functions-for-the-botkit-sdk/): Detailed descriptions of functions available in the Kore.ai Botkit SDK, along with usage examples and best practices.
+
+These resources provide valuable insights and instructions for effectively utilizing Kore.ai's capabilities in your conversational IVR and Node.js integrations.
