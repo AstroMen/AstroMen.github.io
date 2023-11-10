@@ -210,22 +210,22 @@ In this example, `ivrApiUrl` represents the URL of the IVR system's API endpoint
 ## Enhancing Your System: Supplementary Features for Improved Functionality
 To enhance your system, consider implementing these additional features:
 
-### Historical Message Retrieval (`sdk.getMessages`)
+### 1. Historical Message Retrieval (`sdk.getMessages`)
 Retrieve conversation history for better context understanding and tracking of previous user interactions.
 
-### Session Management (`sdk.clearAgentSession`, `sdk.startAgentSession`, `sdk.closeConversationSession`)
+### 2. Session Management (`sdk.clearAgentSession`, `sdk.startAgentSession`, `sdk.closeConversationSession`)
 Manage agent sessions by clearing or initiating them as needed, and appropriately closing conversation sessions.
 
-### Asynchronous Response Handling (`sdk.AsyncResponse`, `sdk.respondToHook`)
+### 3. Asynchronous Response Handling (`sdk.AsyncResponse`, `sdk.respondToHook`)
 Implement asynchronous responses for tasks that may require extended processing time.
 
-### Session Extension (`sdk.extendRequestId`)
+### 4. Session Extension (`sdk.extendRequestId`)
 Use this feature to extend the validity of a request ID when more time is needed to process a user's request.
 
-### Session Reset (`sdk.resetBot`)
+### 5. Session Reset (`sdk.resetBot`)
 Clear context and discard current tasks when a user wishes to restart the conversation.
 
-### Metadata Tags (`metaTags`)
+### 6. Metadata Tags (`metaTags`)
 Add metadata tags to users, messages, and sessions for improved tracking and management.
 
 These supplementary features can be implemented based on your specific business logic and needs. You may need to write corresponding event handling logic based on user behavior or other triggering conditions. Ensure to follow best practices in implementing these features, such as error handling, logging, and secure communication with the Kore.ai platform.
