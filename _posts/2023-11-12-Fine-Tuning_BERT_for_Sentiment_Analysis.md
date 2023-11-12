@@ -4,6 +4,7 @@ title:  "Fine-Tuning BERT for Sentiment Analysis"
 date:   2023-11-12
 categories: jekyll update
 tags: 
+  - NLP
   - BERT
 ---
 
