@@ -44,6 +44,5 @@ A MongoDB sharded cluster is particularly well-suited for:
 ## Conclusion
 
 <img src="https://cdn-prod.scdn6.secure.raxcdn.com/static/media/9198938f-8c47-5a0e-82d9-6db6a62cd3f7/DAM-607b7616-baa4-4f97-b2a5-35fc617b37ec/out/3743.011.png" alt="MongoDB sharded cluster" width="60%" height="auto"/>
-![MongoDB sharded cluster](https://cdn-prod.scdn6.secure.raxcdn.com/static/media/9198938f-8c47-5a0e-82d9-6db6a62cd3f7/DAM-607b7616-baa4-4f97-b2a5-35fc617b37ec/out/3743.011.png)
 
 The MongoDB sharded cluster is a powerful architecture for managing very large datasets and workloads that exceed the hardware limitations of a single server. Its ability to distribute data and load across multiple servers makes it an ideal choice for data-intensive applications that require scalability, high availability, and robust performance.
