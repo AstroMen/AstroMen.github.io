@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Exploring the Fundamentals of Kubernetes Architecture"
-date:   2023-08-18
+date:   2023-11-18
 categories: jekyll update
 tags: 
   - Kubernates
