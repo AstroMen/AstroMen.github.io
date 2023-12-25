@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Top 10 Technology Stacks of 2024"
-date:   2023-12-03
+date:   2023-12-22
 categories: jekyll update
 tags: 
   - Hot Technologies
