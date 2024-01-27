@@ -79,6 +79,8 @@ The workflow is as follows:
 4. The user's request is forwarded to their Notebook server through the Configurable HTTP Proxy.
 5. Users operate on their own Notebook server, such as creating, editing, and running notebooks.
 
+![JupyterHub components](https://jupyterhub.readthedocs.io/en/stable/_images/jhub-parts.png)
+
 The entire process provides a secure, isolated, and resource-controlled working environment for each user, while allowing administrators to efficiently manage and scale server resources.
 
 ## 5. JupyterHub Authentication Mechanisms
