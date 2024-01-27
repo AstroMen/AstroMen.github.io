@@ -12,7 +12,7 @@ tags:
 在数字内容盛行的时代，网络爬虫已成为数据检索和聚合的关键。但传统爬虫在可扩展性、弹性和效率上常面临挑战。本文所描述的分布式网络爬虫系统，针对这些问题，通过分布式数据库和消息代理的能力，实现了从 Google Play 商店爬取应用信息，并将其送至 Apache Kafka，最后存入 Apache Cassandra 数据库的流程。
 
 <p align="center">
-    <br> 中文 | <a href="Distributed_Web_Crawler_Design.md">English</a>
+    <br> 中文 | <a href="2023-08-14-Distributed_Web_Crawler_Design.md">English</a>
 </p>
     使用Kafka和Cassandra
 
