@@ -35,27 +35,27 @@ JupyterHub 和 Jupyter Notebook 都用于创建和分享包含实时代码的文
 
 环境搭建主要包括安装、配置和启动 JupyterHub。这里是一个简单的命令序列，用于在 Ubuntu 系统上搭建环境：
 
-&&&bash
+```bash
 sudo apt update
 sudo apt install -y python3-pip python3-dev npm nodejs
 python3 -m pip install jupyterhub
 npm install -g configurable-http-proxy
-&&&
+```
 
 接下来，创建一个配置文件并编辑：
 
-&&&bash
+```bash
 jupyterhub --generate-config
 vim jupyterhub_config.py
-&&&
+```
 
 在配置文件中，你可以设置例如认证方式、用户数据存储位置、日志文件的路径等选项。
 
 要启动 JupyterHub，只需运行：
 
-&&&bash
+```bash
 jupyterhub
-&&&
+```
 
 这将启动 JupyterHub 服务并默认监听 8000 端口。
 
@@ -91,18 +91,18 @@ JupyterHub 的工作流程涉及几个主要组件的协同工作：
 - **功能描述**：允许用户使用第三方服务（如 GitHub, Google）的账户进行认证。
 - **适用场景**：适用于希望用户可以使用自己的社交账户登录的组织。
 - **配置**：
-  &&&bash
+  ```bash
   python3 -m pip install oauthenticator
-  &&&
+  ```
   在 `jupyterhub_config.py` 文件中设置相应的 OAuth 回调 URL、客户端 ID 和客户端密钥。
 
 ### LDAP 认证
 - **功能描述**：使用轻量级目录访问协议 (LDAP) 进行用户认证，通常与组织内部的用户目录服务集成。
 - **适用场景**：适用于企业或教育机构，这些机构已经有 LDAP 服务器和用户数据库。
 - **配置**：
-  &&&bash
+  ```bash
   python3 -m pip install ldapauthenticator
-  &&&
+  ```
   在 `jupyterhub_config.py` 文件中配置 LDAP 服务器的详细信息，包括地址、用户 DN 模板等。
 
 ### SAML 认证
@@ -125,18 +125,18 @@ JupyterHub 的 API 提供了程序化方式管理和交互 JupyterHub。
 
 ### 示例
 获取当前所有用户的列表：
-&&&bash
+```bash
 curl -H "Authorization: token <your_api_token>" https://<jupyterhub_url>/hub/api/users
-&&&
+```
 
 ## 7. JupyterHub 的测试套件
 
 要安装 JupyterHub 的测试依赖并运行测试，可以使用以下命令：
 
-&&&bash
+```bash
 python3 -m pip install --editable ".[test]"
 pytest -vx jupyterhub
-&&&
+```
 
 这些命令会安装所有测试依赖并运行 JupyterHub 的测试套件。
 
@@ -146,22 +146,22 @@ pytest -vx jupyterhub
 
 ### 配置步骤
 1. **安装 Nginx**
-   &&&bash
+   ```bash
    sudo apt update
    sudo apt install nginx
-   &&&
+   ```
 2. **创建 Nginx 配置文件**
    配置文件通常位于 `/etc/nginx/sites-available/`。创建一个名为 `jupyterhub` 的配置文件：
-   &&&bash
+   ```bash
    sudo touch /etc/nginx/sites-available/jupyterhub
-   &&&
+   ```
 3. **配置服务器块**
    编辑刚创建的配置文件 `/etc/nginx/sites-available/jupyterhub`，设置监听端口（如 80 或 443），并将请求代理到 JupyterHub：
-   &&&bash
+   ```bash
    sudo vim /etc/nginx/sites-available/jupyterhub
-   &&&
+   ```
    在文件中添加以下内容：
-   &&&nginx
+   ```nginx
    server {
        listen 80;
        server_name your-domain.com;
@@ -174,20 +174,20 @@ pytest -vx jupyterhub
            proxy_set_header X-Forwarded-Proto $scheme;
        }
    }
-   &&&
+   ```
 4. **启用站点并重启 Nginx**
    通过创建一个到 `/etc/nginx/sites-enabled/` 的软链接来启用站点：
-   &&&bash
+   ```bash
    sudo ln -s /etc/nginx/sites-available/jupyterhub /etc/nginx/sites-enabled/
    sudo systemctl restart nginx
-   &&&
+   ```
 5. **配置 SSL（如果使用 HTTPS）**
    如果需要 HTTPS，可以使用 Let's Encrypt 提供的免费证书：
-   &&&bash
+   ```bash
    sudo add-apt-repository ppa:certbot/certbot
    sudo apt install python-certbot-nginx
    sudo certbot --nginx -d your-domain.com
-   &&&
+   ```
    这会自动更新 Nginx 配置以使用 SSL，并定期自动更新证书。
 
 ## 9. 实际案例：多用户 JupyterHub 部署及 GitHub 用户认证
@@ -198,26 +198,26 @@ pytest -vx jupyterhub
    在 GitHub 设置中注册新应用，获取 `Client ID` 和 `Client Secret`。
 
 2. **安装 `oauthenticator`**
-   &&&bash
+   ```bash
    python3 -m pip install oauthenticator
-   &&&
+   ```
 
 3. **配置 JupyterHub 使用 GitHub 认证**
    编辑 `jupyterhub_config.py` 文件，添加 GitHub 认证器配置。
-   &&&python
+   ```python
    from oauthenticator.github import GitHubOAuthenticator
    c.JupyterHub.authenticator_class = GitHubOAuthenticator
    c.GitHubOAuthenticator.oauth_callback_url = 'https://your-domain.com/hub/oauth_callback'
    c.GitHubOAuthenticator.client_id = 'your-client-id'
    c.GitHubOAuthenticator.client_secret = 'your-client-secret'
-   &&&
+   ```
 
 4. **配置 Nginx 反向代理**
    按照前面的步骤配置 Nginx，确保它代理到 JupyterHub 并管理 SSL。
 
 5. **启动 JupyterHub**
-   &&&bash
+   ```bash
    jupyterhub
-   &&&
+   ```
 
 用户现在可以使用他们的 GitHub 账户来登录 JupyterHub 了。
