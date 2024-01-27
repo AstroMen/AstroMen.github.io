@@ -20,4 +20,4 @@ permalink: /:year/:month/:day/:title/
 gems:
   - jekyll-paginate
 
-paginate: 10  # total posts for each page
+paginate: 20  # total posts for each page
