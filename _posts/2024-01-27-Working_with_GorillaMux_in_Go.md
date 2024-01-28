@@ -4,7 +4,7 @@ title:  "Working with GorillaMux in Go"
 date:   2024-01-27
 categories: jekyll update
 tags: 
-  - Restful
+  - RESTful
   - Golang
 ---
 
