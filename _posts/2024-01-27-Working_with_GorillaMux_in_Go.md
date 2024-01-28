@@ -8,17 +8,7 @@ tags:
   - Golang
 ---
 
-## Introduction to gorilla/mux
-
 `gorilla/mux` is a powerful HTTP router and dispatcher for Golang. It provides enhanced features for request routing based on URL paths, methods, headers, and query parameters. It's particularly useful for building RESTful APIs where precise control over request handling is required.
-
-### Installation
-
-To get started with `gorilla/mux`, you need to install the package in your Go workspace. This can be done using the `go get` command as follows:
-
-```bash
-go get -u github.com/gorilla/mux
-```
 
 ## gorilla/mux vs Gin
 
