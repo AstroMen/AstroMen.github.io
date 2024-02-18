@@ -130,7 +130,7 @@ Bloom Filters are employed in Cassandra to enhance read performance. They work a
 - **ACID Compliance Trade-offs**: While Cassandra offers some level of ACID transactions, it doesn't adhere to these principles as strictly as traditional RDBMS. This includes compromises in atomicity, consistency, isolation, and durability.
 - **No Support for Relational Schemas**: The lack of support for foreign keys and join tables limits Cassandra's ability to handle complex relational queries.
 
-#### Situations Where Cassandra May Not Be Ideal
+### Situations Where Cassandra May Not Be Ideal
 - **Single Node Applications**: Cassandra may not be the best choice for applications that can be sufficiently served by a single-node database, highlighting its strength in large-scale distributed systems.
 - **Rigid Schema Requirements**: If your application requires a flexible schema with varying columns, a document database like MongoDB might be more suitable.
 - **Performance vs. Features Trade-off**: Cassandra focuses on performance, especially in large-scale deployments, often at the expense of some features found in traditional relational databases.
