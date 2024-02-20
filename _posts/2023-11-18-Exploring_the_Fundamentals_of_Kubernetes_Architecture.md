@@ -22,7 +22,8 @@ By the end of this guide, you will have a solid foundation in Kubernetes archite
 So, let's embark on this educational journey to master Kubernetes, one of the most powerful and widely used container orchestration platforms in the tech world today.
 
 Components and Relationships within a Kubernetes Cluster:
-![Components and Relationships within a Kubernetes Cluster](https://github.com/AstroMen/AstroMen.github.io/blob/f3fa9e9b8c8946f512071699161291c2a53f4836/assets/images/post_img/kubernates_components.png)
+![Components and Relationships within a Kubernetes Cluster](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*eVqphQ2aNKxqHPMPxjRzAA.png)
+<!-- https://github.com/AstroMen/AstroMen.github.io/blob/f3fa9e9b8c8946f512071699161291c2a53f4836/assets/images/post_img/kubernates_components.png -->
 
 ## Table of Contents
 
