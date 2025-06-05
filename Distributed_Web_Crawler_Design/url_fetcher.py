@@ -64,7 +64,19 @@ class URLFetcher:
         time.sleep(random.uniform(0.5, 1.5))
         return data
 
-    def fetch(self, max_threads=10):
+    def fetch(self, url):
+        """Fetch a single URL and return the scraped data along with new URLs."""
+        data = self.fetch_with_retry(url)
+        if data is None:
+            return None, []
+
+        # Generate new URLs from the "Similar Apps" section if available
+        similar = data.get('Similar Apps', {})
+        new_urls = [self.base_url.format(app_id) for app_id in similar.keys()]
+
+        return data, new_urls
+
+    def fetch_all(self, max_threads=10):
         new_urls = []
         with open('ids.txt', 'r') as f:
             for line in f:

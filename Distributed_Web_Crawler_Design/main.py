@@ -118,12 +118,12 @@ class DataProcessor:
 
     def handle_url(self, url):
         # This method is run in a new thread for each URL consumed from Kafka
-        fetched_results = self.fetcher.fetch()
-        for fetched_data, new_urls in fetched_results:
-            if fetched_data is None:
-                logging.error(f"Failed to fetch and process {url} after retries.")
-            self.send_urls_to_kafka(new_urls)
-            self.store_data_in_cassandra(url, fetched_data)
+        fetched_data, new_urls = self.fetcher.fetch(url)
+        if fetched_data is None:
+            logging.error(f"Failed to fetch and process {url} after retries.")
+            return
+        self.send_urls_to_kafka(new_urls)
+        self.store_data_in_cassandra(url, fetched_data)
 
     def consume_urls_from_kafka(self, max_threads=10):
         # Consume URLs from Kafka and process them
