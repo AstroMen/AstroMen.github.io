@@ -53,6 +53,8 @@ Data Science Agent 是 Google 推出的一项创新，旨在通过大型语言�
 6. **历史记录**：记录任务执行的完整历史，供后续分析和优化。  
 7. **用户交互**：用户可提出修改意见，Agent 会根据反馈调整 Plan 并重跑。  
 
+![Workflow Diagram](https://media.licdn.com/dms/image/v2/D5622AQEvFkzZ8_1Wdg/feedshare-shrink_2048_1536/B56Zhu2HixG0Ao-/0/1754206340077?e=1756944000&v=beta&t=8XH93eDowQYl1XhGXakJDpFSw35M2n5mmFNFXeb7gF0)
+
 ---
 
 ## 关键技术
