@@ -53,6 +53,8 @@ Its goal is to help data scientists complete tasks more efficiently, including d
 6. **History Logging**: Maintain a full record of task execution for future analysis and optimization.  
 7. **User Interaction**: Users can provide feedback, and the Agent adjusts the plan and reruns tasks accordingly.  
 
+![Workflow Diagram](https://media.licdn.com/dms/image/v2/D5622AQEvFkzZ8_1Wdg/feedshare-shrink_2048_1536/B56Zhu2HixG0Ao-/0/1754206340077?e=1756944000&v=beta&t=8XH93eDowQYl1XhGXakJDpFSw35M2n5mmFNFXeb7gF0)
+
 ---
 
 ## Key Technologies  
