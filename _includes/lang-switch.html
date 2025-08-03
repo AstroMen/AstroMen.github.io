@@ -1,8 +1,9 @@
 <p align="center">
-{% assign base = page.url | replace: '-CN','' %}
+{% assign clean_url = page.url | replace: '-CN','' | replace: '/','' | append: '/' %}
+{% assign base = page.url | replace: '-CN','' | replace: '/$','' %}
 {% if page.lang == "en" %}
-English | <a href="{{ base | replace: '/$','' }}-CN">中文</a>
+English | <a href="{{ base }}-CN">中文</a>
 {% else %}
-<a href="{{ base | replace: '/$','' }}">English</a> | 中文
+<a href="{{ base }}">English</a> | 中文
 {% endif %}
 </p>
