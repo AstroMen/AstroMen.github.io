@@ -6,11 +6,10 @@ categories: jekyll update
 tags: 
   - AI Agent
   - Data Science
+lang: en
 ---
 
-<p align="center">
-    <br> English | <a href="2025-08-03-Demystifying_Googles_Data_Science_Agent_LLM_Agent_Architecture_Core_Technologies-CN.md">中文</a>
-</p>
+{% include lang-switch.html %}
 
 This article introduces Google’s **Intelligent Data Science Assistant (IDA)** — an innovation that leverages **LLM-powered Agent Architecture** to transform the way data science workflows are executed.  
 By combining automated planning, orchestration, and execution with multimodal reasoning and human-AI collaboration, IDA significantly enhances efficiency, reliability, and scalability in data science tasks.  
