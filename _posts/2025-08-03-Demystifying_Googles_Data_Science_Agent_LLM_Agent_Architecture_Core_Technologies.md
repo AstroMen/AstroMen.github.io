@@ -103,7 +103,7 @@ Its goal is to help data scientists complete tasks more efficiently, including d
 - **Post-training**: Fine-tune with domain-specific data for specialized capabilities.  
 - **OneRecipe Model Management**: A unified training framework at Google, ensuring shared foundation models with domain-level customization.  
 
-### Self-Verification and Feedback Mechanisms (Evaluator/Challenger)**
+### Self-Verification and Feedback Mechanisms (Evaluator/Challenger)
 - **Human-in-the-loop**: Users can intervene and adjust plans anytime.  
 - **Internal Self-Check**: Evaluator verifies outputs; Challenger raises objections; Workers revise accordingly.  
 - **Iterative Optimization**: Use feedback loops and history to continuously improve accuracy.  
