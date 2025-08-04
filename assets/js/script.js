@@ -156,6 +156,37 @@ for (let i = 0; i < navigationLinks.length; i++) {
   });
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+  const currentPath = window.location.pathname;
+
+  // If it’s a pagination page (like /page2/), or the homepage but the user previously clicked on Pagination/Blog
+  if (currentPath.match(/\/page\d+/) || (currentPath === "/" && sessionStorage.getItem("returnFromBlog") === "true")) {
+    document.querySelectorAll(".navbar-link").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll("article").forEach(el => el.classList.remove("active"));
+
+    const blogNav = document.querySelector('.navbar-link[data-nav-link][data-page="blog"]');
+    const blogArticle = document.querySelector('article.blog');
+
+    if (blogNav) blogNav.classList.add("active");
+    if (blogArticle) blogArticle.classList.add("active");
+  }
+
+  // When clicking Pagination or Blog → mark so that when returning to the homepage, Blog is still displayed
+  document.querySelectorAll('[data-keep-blog="true"], .navbar-link[data-page="blog"]').forEach(link => {
+    link.addEventListener("click", function() {
+      sessionStorage.setItem("returnFromBlog", "true");
+    });
+  });
+
+  // Clear the Blog state when clicking other Navbar items
+  document.querySelectorAll('.navbar-link[data-nav-link]').forEach(nav => {
+    nav.addEventListener("click", function() {
+      if (nav.getAttribute("data-page") !== "blog") {
+        sessionStorage.removeItem("returnFromBlog");
+      }
+    });
+  });
+});
 
 // // Page navigation variables
 // const navigationLinks = document.querySelectorAll("[data-nav-link]");
