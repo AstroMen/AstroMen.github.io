@@ -8,9 +8,7 @@ tags:
   - JupyterHub
 ---
 
-<p align="center">
-    <br> 中文 | <a href="2024-01-26-Overview_of_JupyterHub.md">English</a>
-</p>
+{% include lang-switch.html %}
 
 JupyterHub 是一个多用户版本的 Jupyter Notebook，它允许许多用户在一个服务器上进行数据分析、科学计算等工作。以下是关于 JupyterHub 的综合指南。
 

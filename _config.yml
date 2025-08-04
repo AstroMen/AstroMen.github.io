@@ -17,7 +17,9 @@ minima:
 # Permalink structure
 permalink: /:year/:month/:day/:title/
 
-gems:
+plugins:
+  - jekyll-feed
   - jekyll-paginate
 
-paginate: 20  # total posts for each page
+paginate_path: "/page:num/"
+paginate: 10  # total posts for each page

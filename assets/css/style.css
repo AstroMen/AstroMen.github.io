@@ -1396,6 +1396,42 @@ textarea.form-input::-webkit-resizer {
   #PAGER
 \*-----------------------------------*/
 
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination-list {
+  display: inline-flex;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination-item {
+  margin: 0 5px;
+}
+
+.pagination-item a {
+  text-decoration: none;
+  color: var(--light-gray);
+  padding: 6px 12px;
+  border: 1px solid var(--light-gray);
+  border-radius: 4px;
+}
+
+.pagination-item a:hover {
+  background-color: var(--orange-yellow-crayola);
+  color: #fff;
+}
+
+.current-page {
+  padding: 6px 12px;
+  border: 1px solid var(--orange-yellow-crayola);
+  border-radius: 4px;
+  background-color: var(--orange-yellow-crayola);
+  color: #fff;
+}
+
 .pager {
     display: flex;
     justify-content: space-between;
