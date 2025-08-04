@@ -8,9 +8,7 @@ tags:
   - Data Science
 ---
 
-<p align="center">
-    <br> 中文 | <a href="2025-08-03-Demystifying_Googles_Data_Science_Agent_LLM_Agent_Architecture_Core_Technologies.md">English</a>
-</p>
+{% include lang-switch.html %}
 
 本文介绍了谷歌推出的 智能数据科学助手（Intelligent Data Science Assistant，简称 IDA），一项利用 基于大语言模型（LLM）的智能代理架构 来重塑数据科学工作流程的创新。
 通过将自动化的规划、编排与执行，与多模态推理及人机协作相结合，IDA 在数据科学任务中显著提升了效率、可靠性和可扩展性。
