@@ -1,11 +1,23 @@
 <p align="center">
   {% assign filename = page.path | split: '/' | last | split: '.' | first %}
-  
+  {% assign current_url = page.url %}
+
   {% if filename contains '-CN' %}
-    {% assign base = filename | remove: '-CN' %}
-    <a href="{{ site.baseurl }}{% post_url base %}">English</a> | 中文
+    {% comment %} On the current Chinese page, generate a link to the English version {% endcomment %}
+    {% assign english_url = current_url | replace: '-CN/', '/' %}
+    <a href="{{ english_url }}">English</a> | 中文
   {% else %}
-    {% assign cnfile = filename | append: '-CN' %}
-    English | <a href="{{ site.baseurl }}{% post_url cnfile %}">中文</a>
+    {% comment %} On the current English page, generate a link to the Chinese version {% endcomment %}
+    {% assign url_parts = current_url | split: '/' %}
+    {% assign last_part = url_parts | last %}
+    {% if last_part == '' %}
+      {% assign last_part = url_parts[-2] %}
+      {% assign cn_last_part = last_part | append: '-CN' %}
+      {% assign cn_url = current_url | replace: last_part | append: cn_last_part %}
+    {% else %}
+      {% assign cn_last_part = last_part | append: '-CN' %}
+      {% assign cn_url = current_url | replace: last_part, cn_last_part %}
+    {% endif %}
+    English | <a href="{{ cn_url }}">中文</a>
   {% endif %}
 </p>
