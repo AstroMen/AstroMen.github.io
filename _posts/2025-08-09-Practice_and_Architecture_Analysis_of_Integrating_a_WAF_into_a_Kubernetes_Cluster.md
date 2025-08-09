@@ -35,7 +35,7 @@ This article uses **Wallarm WAF** as an example, but the approach applies to oth
 - **Protected Ingress Resources**: Ingress resources configured with annotations to enable WAF detection and blocking.
 - **Application Workloads**: Backend services exposed to users (e.g., API services, web frontends, file download services).
 
-![kubernetes-waf-integration-architecture](https://github.com/AstroMen/AstroMen.github.io/blob/177d0ce3fa8f1bcd2a246bd8dcb7ca6a073a5a41/assets/images/post_img/kubernetes_waf_integration_architecture.png)
+![kubernetes-waf-integration-architecture]({{ '/assets/images/post_img/kubernetes_waf_integration_architecture.png' | relative_url }})
 
 ---
 
