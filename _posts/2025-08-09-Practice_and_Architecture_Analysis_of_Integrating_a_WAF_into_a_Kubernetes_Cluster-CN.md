@@ -34,7 +34,7 @@ tags:
 - **受保护的 Ingress 资源**：通过注解启用 WAF 检测与拦截功能。
 - **业务工作负载**：对外提供服务的后端应用（如 API 服务、Web 前端、文件下载服务等）。
 
-![kubernetes-waf-integration-architecture](https://github.com/AstroMen/AstroMen.github.io/blob/177d0ce3fa8f1bcd2a246bd8dcb7ca6a073a5a41/assets/images/post_img/kubernetes_waf_integration_architecture.png)
+![Kubernetes WAF 架构]({{ '/assets/images/post_img/kubernetes_waf_integration_architecture.png' | relative_url }})
 
 ---
 
