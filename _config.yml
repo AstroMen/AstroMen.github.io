@@ -13,6 +13,8 @@ plugins:
 # Minima theme settings
 minima:
   skin: solarized # example of theme specific settings
+  include:
+    - custom-head
 
 # Permalink structure
 permalink: /:year/:month/:day/:title/
