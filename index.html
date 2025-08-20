@@ -33,8 +33,45 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-H23CSG9XEH');
+    </script>
+
+    <!-- custom tracking code -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          const blogLinks = document.querySelectorAll('.blog-post-item-title a');
+
+          blogLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+              event.preventDefault();  // prevent skip immediately
+
+              const title = this.textContent.trim();
+              const url = this.getAttribute('href');
+
+              console.log(`[GA] click_blog_post: ${title} → ${url}`);
+
+              if (navigator.sendBeacon) {
+                const data = new FormData();
+                data.append('event_name', 'click_blog_post');
+                data.append('event_label', title);
+                navigator.sendBeacon(`https://www.google-analytics.com/mp/collect?measurement_id=G-H23CSG9XEH`, data);
+              }
+
+              // send gtag event
+              gtag('event', 'click_blog_post', {
+                event_category: 'blog',
+                event_label: title,
+                value: 1,
+                page_path: url
+              });
+
+              // Delay redirect to allow GA event to be sent
+              setTimeout(() => {
+                window.location.href = url;
+              }, 500);
+            });
+          });
+        });
     </script>
 </head>
 

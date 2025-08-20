@@ -1,0 +1,32 @@
+@import "minima";
+
+// tag styles
+.post-tags {
+  margin-top: 2em;
+}
+
+.tags-label {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.tag-item {
+  background-color: #e0e0e0;
+  color: #333;
+  font-size: 0.85em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: lowercase;
+  transition: background-color 0.3s;
+}
+
+.tag-item:hover {
+  background-color: #c0c0c0;
+  cursor: default;
+}

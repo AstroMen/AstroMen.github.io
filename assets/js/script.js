@@ -138,21 +138,33 @@ for (let i = 0; i < formInputs.length; i++) {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
-// add event to all nav link
-for (let i = 0; i < navigationLinks.length; i++) {
-  navigationLinks[i].addEventListener("click", function () {
+for (let navIndex = 0; navIndex < navigationLinks.length; navIndex++) {
+  navigationLinks[navIndex].addEventListener("click", function () {
+    const targetPage = this.textContent.trim().toLowerCase();
 
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
-      }
-    }
+    // 1. 页面切换：只有页面中匹配的激活
+    pages.forEach(page => {
+      const isMatch = page.dataset.page === targetPage;
+      page.classList.toggle("active", isMatch);
+    });
 
+    // 2. 导航高亮：只有当前点击的按钮激活
+    navigationLinks.forEach((link, idx) => {
+      link.classList.toggle("active", idx === navIndex);
+    });
+
+    // 3. 手动发送 GA page_view
+    const pagePath = `/${targetPage}`;
+    const pageTitle = targetPage.charAt(0).toUpperCase() + targetPage.slice(1);
+
+    console.log(`[GA] page_view sent → ${pagePath}`);
+    gtag('event', 'page_view', {
+      page_path: pagePath,
+      page_title: pageTitle
+    });
+
+    // 可选：滚动到顶部
+    window.scrollTo(0, 0);
   });
 }
 
