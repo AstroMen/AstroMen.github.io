@@ -7,6 +7,7 @@ tags:
   - Database
   - Vector Database
   - Faiss
+lang: en
 ---
 
 This system leverages vector databases, with a focus on Faiss, to efficiently return the most similar images from a database based on the input image. Vector databases manage high-dimensional data efficiently, and Faiss, developed by Facebook AI Research, is particularly adept at similarity search and clustering of dense vectors.
