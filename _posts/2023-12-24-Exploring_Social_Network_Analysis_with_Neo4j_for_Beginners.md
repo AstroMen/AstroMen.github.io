@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - Database
   - Graph Database 
+lang: en
 ---
 
 Welcome to our beginner's guide on using Neo4j for social network analysis. Neo4j is a powerful graph database that excels in managing complex relationships within data. In this post, we'll explore how Neo4j can be applied in social network contexts, including both basic and advanced use cases.
