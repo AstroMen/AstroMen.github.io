@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - Database
   - Graph Database 
+lang: en
 ---
 
 Welcome to our in-depth guide on leveraging Neo4j for advanced fraud detection. This post is tailored for those with a basic understanding of Neo4j and aims to explore more sophisticated applications in the realm of fraud detection. As fraud schemes become increasingly intricate, a graph database like Neo4j offers unparalleled capabilities in uncovering and preventing these activities.
