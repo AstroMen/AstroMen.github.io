@@ -7,6 +7,7 @@ tags:
   - Database
   - Vector Database
   - Pinecone
+lang: en
 ---
 
 This guide provides a step-by-step overview of creating a recommendation system utilizing the power of Pinecone, a vector database perfect for handling complex queries and high-dimensional data.
