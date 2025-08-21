@@ -5,6 +5,7 @@ date:   2023-08-11
 categories: jekyll update
 tags: 
   - RESTful 
+lang: en
 ---
 
 RESTful principles are the foundation of many modern web services. In this blog, we will explore these principles using a simple demo of a book management system built with Python and Flask.
