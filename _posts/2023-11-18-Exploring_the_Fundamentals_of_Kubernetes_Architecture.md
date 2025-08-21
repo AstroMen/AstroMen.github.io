@@ -7,6 +7,7 @@ tags:
   - Kubernates
   - DevOps
   - CloudComputing 
+lang: en
 ---
 
 This document aims to provide a foundational guide to Kubernetes architecture, covering a range of essential topics including basic concepts, commands, and detailed insights into application deployment processes. Designed to cater to both beginners and intermediate users, this guide serves as a comprehensive resource for anyone looking to explore the world of Kubernetes.

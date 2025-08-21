@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - AI Agent
   - Data Science
+lang: zh
 ---
 
 {% include lang-switch.html %}

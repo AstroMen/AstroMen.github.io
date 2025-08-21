@@ -7,6 +7,7 @@ tags:
   - NLP
   - Kore.ai
   - IVR 
+lang: en
 ---
 
 Kore.ai offers a sophisticated platform for building conversational IVR (Interactive Voice Response) systems, integrating advanced features with Node.js.

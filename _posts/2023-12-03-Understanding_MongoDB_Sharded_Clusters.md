@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - MongoDB
   - Database
+lang: en
 ---
 
 MongoDB sharded clusters provide a mechanism for horizontal scaling, distributing large datasets, and high throughput operations across multiple machines. This document outlines the key components of a MongoDB sharded cluster, their roles, the general workflow, and scenarios where a sharded cluster is the optimal choice.

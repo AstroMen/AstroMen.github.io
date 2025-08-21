@@ -1,0 +1,14 @@
+---
+layout: default
+---
+
+<h1>Posts tagged: {{ page.tag }}</h1>
+<ul>
+  {% for post in site.posts %}
+    {% if post.tags contains page.tag and post.lang == "en" %}
+      <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+<a href="/tags.html">← Back to All Tags</a>

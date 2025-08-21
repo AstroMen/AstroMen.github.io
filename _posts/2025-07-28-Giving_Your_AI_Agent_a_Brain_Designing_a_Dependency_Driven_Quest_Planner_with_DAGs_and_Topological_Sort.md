@@ -8,6 +8,7 @@ tags:
   - Algorithm
   - Topological Sort
   - Workflow Automation
+lang: en
 ---
 
 What if your AI agent could plan like a human — understanding prerequisites, sequencing actions logically, and cleaning up after itself?

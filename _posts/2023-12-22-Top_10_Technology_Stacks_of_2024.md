@@ -5,6 +5,7 @@ date:   2023-12-22
 categories: jekyll update
 tags: 
   - Hot Technologies
+lang: en
 ---
 
 This discussion primarily focuses on cloud-native and distributed systems-related technology stacks. These stacks are expected to undergo significant transformations in 2024 due to the rapid advancement of AI, leading to either a renaissance of older technologies or a surge in newer ones. They will play a crucial role in cost reduction and efficiency improvement for AI applications.

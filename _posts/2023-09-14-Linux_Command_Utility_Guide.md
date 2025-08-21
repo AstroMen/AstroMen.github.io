@@ -4,7 +4,8 @@ title:  "Linux Command Utility Guide"
 date:   2023-09-14
 categories: jekyll update
 tags: 
-  - Linux 
+  - Linux
+lang: en
 ---
 
 In Linux, command line utilities provide a powerful way to interact with the system, offering functionalities such as expanding disk space, file management, system monitoring, and much more. This guide will walk you through some important commands and their usage.

@@ -7,6 +7,7 @@ tags:
   - Kubernates
   - WAF
   - Security
+lang: zh
 ---
 
 {% include lang-switch.html %}

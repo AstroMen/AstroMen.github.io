@@ -15,25 +15,15 @@ layout: default
     {{ content }}
   </div>
 
-	{% if page.tags %}
-	  <footer class="post-tags">
-	    <p class="tags-label">Tags:</p>
-	    <div class="tag-list">
-	      {% for tag in page.tags %}
-	        <span class="tag-item">{{ tag }}</span>
-	      {% endfor %}
-	    </div>
-	  </footer>
-	{% endif %}
-
-  <!-- {% if page.tags %}
+  {% if page.tags %}
     <footer class="post-tags">
-      <p>Tags:
+      <p class="tags-label">🏷️ Tags:</p>
+      <div class="tag-list">
         {% for tag in page.tags %}
-          <span>{{ tag }}</span>{% if forloop.last == false %}, {% endif %}
+          <a href="/tag/{{ tag | slugify }}/" class="tag-item">{{ tag }}</a>
         {% endfor %}
-      </p>
+      </div>
     </footer>
-  {% endif %} -->
+  {% endif %}
 
 </article>

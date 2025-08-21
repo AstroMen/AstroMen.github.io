@@ -4,7 +4,8 @@ title:  "Git Command Help Documentation"
 date:   2023-09-09
 categories: jekyll update
 tags: 
-  - Version Control 
+  - Version Control
+lang: en
 ---
 
 ## Introduction

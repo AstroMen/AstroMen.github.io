@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - DevOps
   - JupyterHub
+lang: zh
 ---
 
 {% include lang-switch.html %}

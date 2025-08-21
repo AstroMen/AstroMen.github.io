@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - NLP
   - BERT
+lang: en
 ---
 
 This guide provides a detailed walkthrough on how to fine-tune a pre-trained BERT model for sentiment analysis using the Hugging Face Transformers library, aimed at beginners.
