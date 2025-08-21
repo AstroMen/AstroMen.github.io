@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - Database
   - Cassandra
+lang: en
 ---
 
 # Comprehensive Overview of Apache Cassandra
