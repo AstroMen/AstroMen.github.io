@@ -135,31 +135,31 @@ gem list bundler         # Check installed Bundler versions
 
 ---
 
-##### Tag Page Generator for Jekyll
+#### Tag Page Generator for Jekyll
 
 A Python script to generate tag pages for a Jekyll blog automatically.
 
-###### 📦 Installation
+##### 📦 Installation
 
 Install the required dependency:
 ```bash
 pip install python-slugify
 ```
 
-###### ▶️ Usage
+##### ▶️ Usage
 
 Run the script with:
 ```bash
 python generate_tag_pages.py
 ```
 
-###### ⚙️ What This Script Does
+##### ⚙️ What This Script Does
 - Traverses the `_posts/` directory  
 - Extracts all `tags` from each post  
 - Generates a Markdown file for each tag in the `tag/` directory (e.g. `tag/data-science.md`)  
 - These tag files can be used by **Jekyll** to build tag archive pages
 
-###### 📁 Output
+##### 📁 Output
 Each generated tag file will be in the format:
 ```markdown
 ---
