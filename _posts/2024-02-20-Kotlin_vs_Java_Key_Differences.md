@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - Backend
   - Kotlin
+lang: en
 ---
 
 Kotlin and Java are both influential languages in the world of software development, particularly in Android app development. Here's an overview of their key differences:
