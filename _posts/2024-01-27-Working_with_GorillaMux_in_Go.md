@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - RESTful
   - Golang
+lang: en
 ---
 
 `gorilla/mux` is a powerful HTTP router and dispatcher for Golang. It provides enhanced features for request routing based on URL paths, methods, headers, and query parameters. It's particularly useful for building RESTful APIs where precise control over request handling is required.
