@@ -6,6 +6,7 @@ categories: jekyll update
 tags: 
   - MongoDB
   - Database
+lang: en
 ---
 
 MongoDB is a popular NoSQL database known for its flexibility and scalability. This document covers the basics of MongoDB, including creation, CRUD operations, optimization techniques, and practical application scenarios.
