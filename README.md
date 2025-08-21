@@ -16,8 +16,6 @@ This guide documents the steps to set up and run a Jekyll blog on macOS using **
 - **rbenv** for managing Ruby versions  
 - macOS terminal with **zsh** (default on macOS Catalina and later)
 
----
-
 #### Setup Steps
 
 ##### 1. Install Homebrew (if not already installed)
@@ -56,8 +54,6 @@ brew install pkg-config protobuf
 protoc --version
 ```
 
----
-
 #### Project Setup
 
 ##### 1. Create a `Gemfile`
@@ -90,8 +86,6 @@ bundle install
 rbenv rehash
 ```
 
----
-
 #### Running Jekyll Locally
 Start the Jekyll server:
 ```
@@ -102,8 +96,6 @@ Then open your browser and visit:
 ```
 http://localhost:4000
 ```
-
----
 
 #### Troubleshooting
 
@@ -140,3 +132,40 @@ rbenv rehash             # Refresh shims after installs
 bundle -v                # Check Bundler version
 gem list bundler         # Check installed Bundler versions
 ```
+
+---
+
+##### Tag Page Generator for Jekyll
+
+A Python script to generate tag pages for a Jekyll blog automatically.
+
+###### 📦 Installation
+
+Install the required dependency:
+```bash
+pip install python-slugify
+```
+
+###### ▶️ Usage
+
+Run the script with:
+```bash
+python generate_tag_pages.py
+```
+
+###### ⚙️ What This Script Does
+- Traverses the `_posts/` directory  
+- Extracts all `tags` from each post  
+- Generates a Markdown file for each tag in the `tag/` directory (e.g. `tag/data-science.md`)  
+- These tag files can be used by **Jekyll** to build tag archive pages
+
+###### 📁 Output
+Each generated tag file will be in the format:
+```markdown
+---
+layout: tag
+title: "Tag: data-science"
+tag: data-science
+---
+```
+These files will be placed in the `tag/` folder and picked up by Jekyll during site build.
