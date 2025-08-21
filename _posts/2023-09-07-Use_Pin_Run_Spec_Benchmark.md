@@ -5,6 +5,7 @@ date:   2023-09-07
 categories: jekyll update
 tags: 
   - Benchmark Test 
+lang: en
 ---
 
 ## Step 1: Building the SPEC2006 Benchmark Environment
