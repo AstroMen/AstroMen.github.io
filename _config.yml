@@ -9,6 +9,7 @@ github_username:  AstroMen
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-paginate
 
 # Minima theme settings
 minima:
@@ -19,9 +20,9 @@ minima:
 # Permalink structure
 permalink: /:year/:month/:day/:title/
 
-plugins:
-  - jekyll-feed
-  - jekyll-paginate
-
 paginate_path: "/page:num/"
 paginate: 10  # total posts for each page
+
+sass:
+  sass_dir: _sass
+  style: compressed
