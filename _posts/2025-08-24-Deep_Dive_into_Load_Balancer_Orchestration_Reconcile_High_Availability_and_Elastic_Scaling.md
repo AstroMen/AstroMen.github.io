@@ -288,6 +288,7 @@ ELB orchestration resembles a **custom controller** and can adopt Kubernetes Ope
 ![ELB orchestrator]({{ '/assets/images/post_img/elb_orchestrator.png' | relative_url }})
 
 > 📌 Caption: Illustrates the complete loop from user request to automatic scaling.
+
 ---
 
 ## 9. Summary
