@@ -9,7 +9,8 @@ tags:
   - Cloud
   - AutoScaling
   - HighAvailability
-lang: zh
+lang: en
+published: false
 ---
 
 {% include lang-switch.html %}
