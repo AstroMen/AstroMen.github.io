@@ -148,13 +148,13 @@ Answer: **MCP is an API spec purpose-built for LLMs.**
 1. **Initialization (Schema Registration)**  
    Tool provides JSON Schema describing functions, parameters, return values.  
    Example:  
-   &&&json
+   ```json
    {
      "name": "send_email",
      "description": "Send an email to a recipient",
      "parameters": { ... }
    }
-   &&&
+   ```
 
 2. **Invocation (Structured Execution)**  
    - LLM interprets intent → generates schema-compliant JSON  
