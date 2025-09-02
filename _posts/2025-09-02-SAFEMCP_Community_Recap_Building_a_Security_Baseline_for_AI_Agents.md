@@ -54,13 +54,12 @@ This structure shifts security teams from vague concerns to specific defenses.
 
 #### 2. **Defining a “Security Vocabulary”: Unified Language for Engineers**
 Each attack is assigned a unique ID, for example:
-```
+
 | Tactic ID   | Tactic Name     | Technique ID | Technique Name             | Description                                                                                   |
 |-------------|-----------------|--------------|----------------------------|-----------------------------------------------------------------------------------------------|
 | ATK-TA0001  | Initial Access  | SAFE-T1001   | Tool Poisoning Attack (TPA)| Attackers embed malicious instructions within MCP tool descriptions that are invisible to users but processed by LLMs |
 | ATK-TA0002  | Execution       | SAFE-T1101   | Command Injection          | Exploitation of unsanitized input in MCP server implementations leading to remote code execution |
 | ATK-TA0003  | Persistence     | SAFE-T1201   | MCP Rug Pull Attack        | Time-delayed malicious tool definition changes after initial approval                          |
-```
 
 Like HTTP 404 or CVE IDs, this makes communication faster and more precise.
 
@@ -200,8 +199,9 @@ SAFE-MCP is evolving into the **“playbook” of AI security** — bridging “
 - **Bi-weekly hackathons & contributor meetups** keep momentum high  
 
 ### 🌐 Three Key Standards Partnerships
+
 | Org | Collaboration | Impact |
-|-----|--------------|--------|
+|-----|---------------|--------|
 | **OIDC AI Identity WG** | Co-develop MCP identity standards | NHI standardization |
 | **Linux Foundation OpenSSF** | Apply for incubation | Resource support, industry endorsement |
 | **OWASP** | Align with AI Security Top 10 | Cross-standard mapping |
