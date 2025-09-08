@@ -53,8 +53,11 @@ ExternalDNS 的核心流程如下：
 5. 同时创建一条 TXT 记录用于所有权标识（防止冲突）  
 6. 资源删除时自动清理 DNS 记录  
 
-```
-Ingress / Service  →  ExternalDNS Controller  →  Cloud DNS Provider  →  Public DNS Resolution
+```mermaid
+graph LR
+    A[Ingress / Service] --> B(ExternalDNS Controller)
+    B --> C[Cloud DNS Provider]
+    C --> D[Public DNS Resolution]
 ```
 
 ---
@@ -282,23 +285,27 @@ time="2025-04-05T10:00:01Z" level=info  msg="Desired change: CREATE app.example.
 
 ### 3. 监控与可观测性（Prometheus Metrics）
 
-ExternalDNS 内置 Prometheus 指标，暴露在 `/metrics` 端点（默认端口 `7979`）。
+ExternalDNS 内置 Prometheus 指标，暴露在 `/metrics` 端点（默认端口 `7979`，可通过 `--metrics-address` 修改），可用于监控 DNS 同步状态、错误率和记录数量。
 
-#### 常见指标包括：
+#### ExternalDNS 官方 FAQ 提供的常见指标：
 
 | 指标 | 说明 |
 |------|------|
-| `external_dns_controller_sync_duration_seconds` | 同步周期耗时 |
-| `external_dns_endpoint_count` | 当前管理的 DNS 记录数量 |
-| `external_dns_registry_zone_records` | 每个托管区的记录数 |
-| `external_dns_updates_total` | 成功更新次数 |
-| `external_dns_update_failures_total` | 更新失败次数 |
-| `external_dns_zones_count` | 管理的托管区数量 |
+| `external_dns_controller_last_sync_timestamp_seconds` | 上一次成功与 DNS 提供商同步的时间戳（Unix 时间） |
+| `external_dns_registry_endpoints_total` | Registry 中管理的 DNS 记录数量（ExternalDNS 认为应当存在的目标状态） |
+| `external_dns_registry_errors_total` | 与 DNS 提供商交互时发生的错误数（如 API 调用失败） |
+| `external_dns_source_endpoints_total` | 从 Kubernetes 资源（Ingress/Service 等）读取到的记录数量（期望状态） |
+| `external_dns_source_errors_total` | 读取 Kubernetes 资源时的错误数（如 API 访问失败） |
+| `external_dns_controller_verified_records` | 已在 DNS 提供商处验证存在的记录数量（源与目标一致） |
+| `external_dns_registry_a_records` | Registry 中的 A 记录数量 |
+| `external_dns_source_a_records` | Kubernetes 集群声明的 A 记录数量 |
 
 > 📊 **建议：**
-> - 将 ExternalDNS 接入 Prometheus 抓取
-> - 使用 Grafana 构建监控面板，观察 DNS 同步状态
-> - 对 `update_failures_total` 设置告警，及时发现权限或网络问题
+> - 在 Prometheus 中配置抓取任务，目标为 `http://<external-dns-pod>:7979/metrics`
+> - 使用 Grafana 构建监控面板，重点关注：
+>   - `registry_errors_total` 与 `source_errors_total` 的变化趋势
+>   - `last_sync_timestamp_seconds` 是否持续更新
+>   - `verified_records` 与 `source_a_records` 是否大致相等（表示同步正常）
 
 ---
 
@@ -345,11 +352,11 @@ ExternalDNS 是 Kubernetes 环境中实现 **DNS 自动化管理**的关键组�
 
 ## 参考资料
 
-- GitHub 项目：[https://github.com/kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)
-- 官方文档：[https://external-dns.github.io/](https://external-dns.github.io/)
-- Helm Chart：[https://artifacthub.io/packages/helm/external-dns/external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)
-- AWS IAM 权限参考：[Route 53 API Permissions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security_iam_service-with-iam.html)
-- Prometheus Metrics 文档：[https://github.com/kubernetes-sigs/external-dns#metrics](https://github.com/kubernetes-sigs/external-dns#metrics)
+- GitHub 项目：[kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)  
+- 官方文档：[ExternalDNS 文档](https://kubernetes-sigs.github.io/external-dns/)  
+- Helm Chart：[ArtifactHub - external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)  
+- AWS IAM 权限参考：[Route 53 API 权限](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security_iam_service-with-iam.html)  
+- Prometheus Metrics：[ExternalDNS FAQ - 指标说明](https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean)
 
 ---
 
