@@ -352,11 +352,11 @@ ExternalDNS 是 Kubernetes 环境中实现 **DNS 自动化管理**的关键组�
 
 ## 参考资料
 
-- GitHub 项目：[https://github.com/kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)
-- 官方文档：[https://kubernetes-sigs.github.io/external-dns/](https://kubernetes-sigs.github.io/external-dns/)
-- Helm Chart：[https://artifacthub.io/packages/helm/external-dns/external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)
-- AWS IAM 权限参考：[Route 53 API Permissions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security_iam_service-with-iam.html)
-- Prometheus Metrics 文档：[https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/?utm_source=chatgpt.com#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean](https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/?utm_source=chatgpt.com#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean) 
+- GitHub 项目：[kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)  
+- 官方文档：[ExternalDNS 文档](https://kubernetes-sigs.github.io/external-dns/)  
+- Helm Chart：[ArtifactHub - external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)  
+- AWS IAM 权限参考：[Route 53 API 权限](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security_iam_service-with-iam.html)  
+- Prometheus Metrics：[ExternalDNS FAQ - 指标说明](https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean)
 
 ---
 
