@@ -348,11 +348,11 @@ ExternalDNS is a key tool for **automated DNS management** in Kubernetes. By usi
 
 ## References
 
-- GitHub Project: [https://github.com/kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)  
-- Official Docs: [https://external-dns.github.io/](https://kubernetes-sigs.github.io/external-dns/)  
-- Helm Chart: [https://artifacthub.io/packages/helm/external-dns/external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)  
+- GitHub Project: [kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)  
+- Official Docs: [ExternalDNS Docs](https://kubernetes-sigs.github.io/external-dns/)  
+- Helm Chart: [ArtifactHub - external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)  
 - AWS IAM Permissions: [Route 53 API Permissions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security_iam_service-with-iam.html)  
-- Prometheus Metrics: [https://github.com/kubernetes-sigs/external-dns#metrics](https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/?utm_source=chatgpt.com#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean) 
+- Prometheus Metrics: [ExternalDNS FAQ - Metrics](https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean)
 
 ---
 
