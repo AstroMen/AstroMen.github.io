@@ -145,6 +145,7 @@ Imagine you have a team where developers should only be able to read Pods in a n
   ```
   
 - **Bind Roles to Users/Groups**: Use RoleBindings to grant the defined roles to users or groups.
+
   ```yaml
   kind: RoleBinding
   apiVersion: rbac.authorization.k8s.io/v1
