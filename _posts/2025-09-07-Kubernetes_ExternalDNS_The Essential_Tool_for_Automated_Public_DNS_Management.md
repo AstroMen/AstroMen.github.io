@@ -278,30 +278,23 @@ time="2025-04-05T10:00:01Z" level=info  msg="Desired change: CREATE app.example.
 
 Use `--set dryRun=true` to preview intended changes without modifying DNS.
 
-### 3. Monitoring & Observability (Prometheus Metrics)
+### 3. Monitoring with Prometheus
 
-ExternalDNS exposes Prometheus metrics at the `/metrics` endpoint (default port `7979`, configurable via `--metrics-address`). These metrics help monitor DNS sync status, error rates, and record counts.
-
-#### Common metrics documented in the ExternalDNS FAQ:
+ExternalDNS exposes Prometheus metrics at `/metrics` (default `:7979`).
 
 | Metric | Description |
 |--------|-------------|
-| `external_dns_controller_last_sync_timestamp_seconds` | Unix timestamp of the last successful sync with the DNS provider |
-| `external_dns_registry_endpoints_total` | Number of DNS records in the registry (the desired state managed by ExternalDNS) |
-| `external_dns_registry_errors_total` | Number of errors when interacting with the DNS provider (e.g., API failures) |
-| `external_dns_source_endpoints_total` | Number of DNS records read from Kubernetes resources (Ingress/Service, i.e., desired state) |
-| `external_dns_source_errors_total` | Number of errors when reading from Kubernetes resources (e.g., API access issues) |
-| `external_dns_controller_verified_records` | Number of DNS records successfully verified to exist at the provider (source matches target) |
-| `external_dns_registry_a_records` | Number of A records in the registry |
-| `external_dns_source_a_records` | Number of A records declared in the Kubernetes cluster |
+| `external_dns_controller_sync_duration_seconds` | Sync cycle duration |
+| `external_dns_endpoint_count` | DNS records managed |
+| `external_dns_registry_zone_records` | Records per hosted zone |
+| `external_dns_updates_total` | Successful updates |
+| `external_dns_update_failures_total` | Update failures |
+| `external_dns_zones_count` | Zones managed |
 
-> 📊 **Recommendations:**
-> - Configure Prometheus to scrape from `http://<external-dns-pod>:7979/metrics`
-> - Build Grafana dashboards to visualize sync status
-> - Focus on:
->   - Growth in `registry_errors_total` and `source_errors_total`
->   - Whether `last_sync_timestamp_seconds` is consistently updating
->   - Whether `verified_records` is close to `source_a_records` (indicating healthy sync)
+> 📊 **Recommendation:**  
+> - Scrape metrics with Prometheus  
+> - Build Grafana dashboards for DNS sync state  
+> - Alert on `update_failures_total`  
 
 ---
 
@@ -348,11 +341,11 @@ ExternalDNS is a key tool for **automated DNS management** in Kubernetes. By usi
 
 ## References
 
-- GitHub Project: [kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)  
-- Official Docs: [ExternalDNS Docs](https://kubernetes-sigs.github.io/external-dns/)  
-- Helm Chart: [ArtifactHub - external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)  
+- GitHub Project: [https://github.com/kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)  
+- Official Docs: [https://external-dns.github.io/](https://external-dns.github.io/)  
+- Helm Chart: [https://artifacthub.io/packages/helm/external-dns/external-dns](https://artifacthub.io/packages/helm/external-dns/external-dns)  
 - AWS IAM Permissions: [Route 53 API Permissions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security_iam_service-with-iam.html)  
-- Prometheus Metrics: [ExternalDNS FAQ - Metrics](https://kubernetes-sigs.github.io/external-dns/v0.12.2/faq/#what-metrics-can-i-get-from-externaldns-and-what-do-they-mean)
+- Prometheus Metrics: [https://github.com/kubernetes-sigs/external-dns#metrics](https://github.com/kubernetes-sigs/external-dns#metrics)  
 
 ---
 
