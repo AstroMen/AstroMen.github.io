@@ -9,6 +9,22 @@ layout: default
     <p class="post-meta">
       {{ page.date | date: "%B %d, %Y" }}
     </p>
+    <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Change <pre><code class="language-mermaid">...</code></pre> to <div class="mermaid">...</div>
+        document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+          var container = document.createElement('div');
+          container.className = 'mermaid';
+          container.textContent = code.textContent;
+          var pre = code.parentElement;
+          pre.parentElement.replaceChild(container, pre);
+        });
+        if (window.mermaid) {
+          mermaid.initialize({ startOnLoad: true });
+        }
+      });
+    </script>
   </header>
 
   <div class="post-content">
