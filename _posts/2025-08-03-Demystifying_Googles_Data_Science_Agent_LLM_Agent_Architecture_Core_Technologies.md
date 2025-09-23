@@ -29,6 +29,9 @@ Its goal is to help data scientists complete tasks more efficiently, including d
 - **Multimodal Understanding and Reasoning**: Go beyond text to handle images, videos, and other modalities, providing cross-modal comprehension.  
 - **Efficient Collaboration**: Combine human expertise with AI to improve decision quality.  
 
+
+![Demo]({{ '/assets/images/post_img/google_data_science_agent_demo.png' | relative_url }})
+
 ---
 
 ## Application Scenarios
@@ -52,7 +55,7 @@ Its goal is to help data scientists complete tasks more efficiently, including d
 6. **History Logging**: Maintain a full record of task execution for future analysis and optimization.  
 7. **User Interaction**: Users can provide feedback, and the Agent adjusts the plan and reruns tasks accordingly.  
 
-![Workflow Diagram](https://media.licdn.com/dms/image/v2/D5622AQEvFkzZ8_1Wdg/feedshare-shrink_2048_1536/B56Zhu2HixG0Ao-/0/1754206340077?e=1756944000&v=beta&t=8XH93eDowQYl1XhGXakJDpFSw35M2n5mmFNFXeb7gF0)
+![Workflow Diagram]({{ '/assets/images/post_img/google_data_science_agent_workflow.png' | relative_url }})
 
 ---
 
