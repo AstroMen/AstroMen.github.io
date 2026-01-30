@@ -146,7 +146,7 @@ To avoid “conceptually correct but hard to ship,” Aegis decomposes a long-ru
 
 ## 2.1 Architecture Diagram (Mermaid)
 
-&&&mermaid
+```mermaid
 ---
 config:
   layout: elk
@@ -232,7 +232,7 @@ graph TD
     LEDGER --> EVAL --> EXTRACT --> UPDATE --> SKIDX
     FSM -->|Close incident| NTF
     NTF --> L5
-&&&
+```
 
 ---
 
@@ -244,7 +244,7 @@ This layer resolves the tension between “context window explosion” and “re
 
 From the Agent’s perspective, the cloud is not a set of API docs, but a semantic directory tree. With a few primitives (`ls/read/grep/diff/tail`), it can explore logs, metrics, traces, configs, permissions, and changes, and unify them into “evidence objects” that can be referenced.
 
-&&&text
+```text
 /
 ├── teams/
 │   ├── payment/
@@ -264,7 +264,7 @@ From the Agent’s perspective, the cloud is not a set of API docs, but a semant
     │   └── aws/iam_ecr_auth_fix.skill.yaml
     ├── history/session_log.md                  (Conversation/Action History)
     └── approvals/pending/                      (Approval Requests)
-&&&
+```
 
 > **Where Skills live in VFS (light clarification):** `/context/skills/` is both skill storage and “versionable operational knowledge.” Level 1 provides addressability/searchability; Level 3 Router/Planner selects/loads/compiles these skills into concrete Plan DSL.
 
@@ -325,13 +325,13 @@ Traditional RAG often pulls data locally and then processes it. For GB/TB logs a
   3) **Execute:** run at source; return only the required results (e.g., 50 lines) and write to an evidence file
 
 Example (Loki LogQL):
-&&&json
+```json
 {app="payment"} |= "OOM" | line_format " "
-&&&
+```
 And enforce limit at the adapter:
-&&&json
+```json
 { "query": "{app='payment'} |= 'OOM'", "limit": 50 }
-&&&
+```
 
 This “move compute to data” design lets the Agent explore massive datasets at low token cost while remaining explainable and auditable.
 
@@ -416,10 +416,10 @@ Before data enters the LLM context, Level 2 applies a configurable middleware ch
 - typical targets: DB outputs, user identifiers, tokens, emails, IPs
 
 Example:
-&&&text
+```text
 Input:  User email: admin@example.com
 Output: User email: [REDACTED_EMAIL]
-&&&
+```
 
 #### 4.3.2 TTL + Encryption
 - TTL policies (e.g., 72-hour auto-expiration)
@@ -491,7 +491,7 @@ Benefits:
 3) easier auditing: plans are inherently structured for gates/replay
 
 **Planner JSON DSL example (simplified)**
-&&&json
+```json
 {
   "incident_id": "INC-2026-0127-001",
   "hypothesis": "ECR auth token missing",
@@ -515,7 +515,7 @@ Benefits:
     { "tool": "query_metrics", "params": { "promql": "rate(http_5xx[5m])" } }
   ]
 }
-&&&
+```
 
 ---
 
@@ -537,7 +537,7 @@ Skills live under **`/context/skills/`**:
 - **Value:** enterprises can have hundreds of runbooks; pre-injecting them into prompts is infeasible. On-demand loading aligns with Level 1 dynamic context discovery.
 
 AFS example:
-&&&text
+```text
 /context/
   skills/
     _index.json
@@ -548,14 +548,14 @@ AFS example:
       iam_policy_check.yaml
     db/
       postgres_deadlock_fix.yaml
-&&&
+```
 
 #### 5.2.2 From Markdown Docs to Composable DSL Modules
 
 Aegis supports promoting high-frequency runbooks into structured skill modules (YAML/JSON Schema), letting Planner “call a skill” rather than improvise.
 
 Example:
-&&&yaml
+```yaml
 skill: k8s_ecr_auth_fix
 triggers:
   - log_contains: "ECR authorization token"
@@ -574,7 +574,7 @@ guardrails:
   - require_evidence: true
   - max_retries: 2
   - allow_write: false   # default; must be lifted by Harness approval
-&&&
+```
 
 Benefits:
 - versioned, testable (CI)
@@ -603,7 +603,7 @@ Risk Engine is not “another LLM.” It is a signal fusion and risk modeling co
 - estimate cascading risks via SCM/graph/rules, not just similarity search
 
 Risk Envelope example:
-&&&json
+```json
 {
   "blast_radius_score": 0.82,
   "impact_scope": ["payments/prod", "payment-service", "us-west-2"],
@@ -616,7 +616,7 @@ Risk Envelope example:
   "why": ["IAM change impacts shared role used by multiple workloads"],
   "safe_alternatives": ["canary_rollback_first", "graceful_drain_then_restart"]
 }
-&&&
+```
 
 > Key: the Risk Engine provides structured inputs for automated gating/audit—not just natural-language warnings.
 
@@ -988,7 +988,7 @@ An EMR on EKS job fails; Pod is `ImagePullBackOff` and cannot pull the image.
 
 ### Sequence Diagram
 
-&&&mermaid
+```mermaid
 sequenceDiagram
     participant A as 🤖 Agent (Planner/Investigator)
     participant H as 🛡️ Harness (FSM/Guardrails)
@@ -1023,7 +1023,7 @@ sequenceDiagram
     S->>C: GetPodStatus
     C-->>S: OK
     S-->>H: verified
-&&&
+```
 
 > Note: the diagram emphasizes that both read/write go through Gateway + Harness, and **secret isolation** + **audit** are default.
 
