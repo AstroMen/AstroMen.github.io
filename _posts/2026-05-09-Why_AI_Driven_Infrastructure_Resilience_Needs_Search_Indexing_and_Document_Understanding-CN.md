@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "为什么 AI 驱动的基础设施韧性需要搜索、索引与文档理解"
-date:   2016-05-09
+date:   2026-05-09
 categories: jekyll update
 tags: 
   - AI Agent
