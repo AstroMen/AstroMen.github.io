@@ -67,12 +67,13 @@ This is the gap an AI-driven RCA Agent needs to address. Recent AIOps and agenti
 An RCA Agent should not directly read all logs and guess the answer. A safer approach is to build a workflow-first, evidence-grounded agent where the LLM acts as a planner, tool caller, and evidence synthesizer, with critic, checkpoint, and human-in-the-loop controls at key steps.[1][3][4]
 
 ```text
-LLM plans
-Tools retrieve
-Ranker filters
-LLM reasons from evidence
-Policy verifies
-Human approves high-risk actions
+The system follows a controlled reasoning pattern:
+1. The LLM plans the investigation.
+2. Tools retrieve operational evidence.
+3. Rankers filter and prioritize evidence.
+4. The LLM reasons from evidence.
+5. Policy verifies proposed actions.
+6. Humans approve high-risk operations.
 ```
 
 In this design, the LLM is not the data source and should not be the only decision-maker. It acts more like a:
@@ -84,8 +85,42 @@ In this design, the LLM is not the data source and should not be the only decisi
 
 A typical workflow can look like this:
 
-```text
-Alert / On-call / Chat Question
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    A["Incident Trigger<br/>(Alert, On-call, or Chat Question)"] --> B["Incident Context Builder"]
+    B --> C["Planner"]
+    C --> D["Retriever Router"]
+    D --> E["Evidence Pack Builder"]
+    E --> F["RCA Synthesizer"]
+    F --> G["Critic / Counterfactual Validator"]
+    G --> H["Root Cause Scoring"]
+    H --> I["Policy Governor"]
+    I --> J["Diagnosis + Safe Action Proposal"]
+    J --> K{"Risk Acceptable<br/>and Policy Passed?"}
+
+    K -- "No" --> L["Human Approval / Escalation"]
+    L --> M["Controlled Execution<br/>(If Approved)"]
+
+    K -- "Yes" --> M["Controlled Execution"]
+
+    M --> N["Post-check"]
+    N --> O{"Post-check Passed?"}
+
+    O -- "Yes" --> P["Incident Memory<br/>Audit / Replay"]
+    O -- "No" --> Q["Rollback / Freeze / Escalation"]
+    Q --> P
+```
+
+```markdown
+<!--
+ARCHIVED — kept for editing reference only. Do not render in preview.
+
+Incident Trigger
+(alert, on-call, or chat question)
         ↓
 Incident Context Builder
         ↓
@@ -108,6 +143,7 @@ Diagnosis + Safe Action Proposal
 Human Approval / Controlled Execution
         ↓
 Post-check / Rollback / Incident Memory
+-->
 ```
 
 In this architecture, the agent does not directly read all operational data. Instead, it uses controlled tools to access different evidence sources:
@@ -895,6 +931,14 @@ The real question is:
 
 These questions are better served by structural navigation.
 
+| Traditional Vector RAG | Vectorless / Structured RAG |
+|---|---|
+| Chunk documents | Parse document structure |
+| Embed chunks | Build structured section index |
+| Search by similarity | Navigate by document hierarchy |
+| Return top-k chunks | Return precise section path |
+| Best for semantic similarity | Best for structured knowledge and safety rules |
+
 ---
 
 ## 5.2 What Vectorless RAG Is Good For
@@ -1066,7 +1110,24 @@ PageIndex-style retrieval usually requires an offline or near-real-time indexing
 
 The flow can be:
 
-```text
+```mermaid
+flowchart TD
+    A["Runbook / Postmortem / Architecture Doc"] --> B["Parse Document"]
+    B --> C["Detect Structure"]
+    C --> D["Build Document Tree<br/>(document → section → subsection → paragraph/table)"]
+    D --> E["Attach Metadata<br/>(service, owner, doc_type, updated_at, risk_level)"]
+    E --> F["Store Structured Index"]
+
+    G["Query:<br/>Is rollback safe?"] --> H["Query Router"]
+    H --> I["Navigate Document Tree"]
+    I --> J["Retrieve Precise Section"]
+    J --> K["Return Evidence with Section Path"]
+```
+
+```markdown
+<!--
+ARCHIVED — kept for editing reference only. Do not render in preview.
+
 Runbooks / Postmortems / Architecture Docs
         ↓
 Parse Document
@@ -1080,6 +1141,7 @@ Attach Metadata:
   service, doc_type, owner, updated_at, risk_level
         ↓
 Store Structured Index
+-->
 ```
 
 Metadata is important. Examples include:
@@ -1108,27 +1170,19 @@ For example:
 ```text
 Question:
 "Is rollback safe for workspace-service after DB schema migration?"
-
         ↓
-
 Query Router:
 This is a safety / rollback question.
-
         ↓
-
 Navigate:
 Runbook
   → Workspace Service
   → Deployment Recovery
   → Rollback Conditions
   → Database Migration Safety
-
         ↓
-
 Retrieve Precise Section
-
         ↓
-
 Return evidence with section path
 ```
 
@@ -1250,6 +1304,15 @@ Each data type should use the retrieval method that best fits its structure and 
 ## 7.2 Query Routing: Different Questions Need Different Indexes
 
 A key capability of the RCA Agent is query routing. Different questions should trigger different retrieval paths.
+
+Rather than sending the question to every available index, the router first parses the incident context and then selects the most appropriate retrieval path based on the query type.
+
+In the actual workflow, retrieval is not a single search operation. It can be broken down into four steps:
+
+1. Parse the incident context, including the service, region, symptom, and time window.
+2. Select the appropriate indexes and tools based on the query type.
+3. Retrieve and rerank evidence from logs, metrics, traces, documents, dependency graphs, and other sources.
+4. Build an Evidence Pack and pass it to the RCA Agent for downstream analysis.
 
 | Query Type | Retrieval Path |
 |---|---|
@@ -1800,7 +1863,48 @@ The MVP goal can be:
 
 ## 11.2 MVP Reference Architecture
 
-```text
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    A["Alert / On-call / Chat Question"] --> B["Incident Context Builder"]
+    B --> C["Query Router"]
+
+    C --> D1["Log Search<br/>Elasticsearch / OpenSearch"]
+    C --> D2["Metrics Query<br/>Prometheus / CloudWatch"]
+    C --> D3["Trace Query<br/>Jaeger / Tempo"]
+    C --> D4["Deployment / Config Index"]
+    C --> D5["Structured Knowledge Retrieval<br/>PageIndex-style Navigation"]
+    C --> D6["Semantic Similar Incident Search<br/>Vector DB / Embeddings"]
+    C --> D7["Service Dependency Graph"]
+
+    D1 --> E["Incident Window Memory"]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    D5 --> E
+    D6 --> E
+    D7 --> E
+
+    E --> F["Evidence Pack"]
+    F --> G["Evidence Ranker"]
+    G --> H["Candidate Root Cause Generator"]
+    H --> I["Critic / Counterfactual Validator"]
+    I --> J["Root Cause Scoring"]
+    J --> K["Diagnosis + Safe Action Proposal"]
+    K --> L["Policy Verifier + Human Approval"]
+    L --> M["Controlled Execution / Post-check"]
+    M --> N["Rollback / Freeze<br/>(If Post-check Fails)"]
+    M --> O["Incident Memory / Audit / Replay"]
+    N --> O
+```
+
+```markdown
+<!--
+ARCHIVED — kept for editing reference only. Do not render in preview.
+
                  Alert / Chat Question
                          ↓
                Incident Context Builder
@@ -1843,6 +1947,7 @@ The MVP goal can be:
            Controlled Execution / Post-check
                          ↓
         Incident Memory / Audit / Replay
+-->
 ```
 
 ---
