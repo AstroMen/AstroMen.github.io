@@ -36,7 +36,7 @@ lang: zh
 
 ## 1.1 传统监控的局限
 
-传统 monitoring / observability 系统通常围绕 alerts、dashboards 和 static thresholds 工作。它们擅长检测异常，例如：
+传统 monitoring 和 observability 系统通常围绕 alerts、dashboards 和 static thresholds 工作。它们擅长检测异常，例如：
 
 - error rate 超过阈值；
 - latency 突然升高；
@@ -67,12 +67,13 @@ lang: zh
 RCA Agent 不应该直接“看全部日志然后猜答案”。更合理的方式是构建 workflow-first 的 evidence-grounded agent，让 LLM 作为 planner、tool caller 和 evidence synthesizer，并在关键节点加入 critic、checkpoint 和 human-in-the-loop 控制。[1][3][4]
 
 ```text
-LLM plans
-Tools retrieve
-Ranker filters
-LLM reasons from evidence
-Policy verifies
-Human approves high-risk actions
+系统遵循一种受控的推理模式：
+1. LLM 负责规划排查思路。
+2. 工具负责检索运维证据。
+3. Ranker 负责过滤并优先排序证据。
+4. LLM 基于证据进行推理，而不是凭空判断。
+5. Policy 层负责验证建议动作是否符合安全规则。
+6. 高风险操作必须由人工审批后才能执行。
 ```
 
 也就是说，LLM 不是数据源，也不是唯一判断者。LLM 更像是：
@@ -99,45 +100,19 @@ flowchart TD
     G --> H["Root Cause Scoring"]
     H --> I["Policy Governor"]
     I --> J["Diagnosis + Safe Action Proposal"]
-    J --> K["Human Approval / Controlled Execution"]
-    K --> L["Post-check / Rollback / Incident Memory"]
-```
+    J --> K{"Risk Acceptable<br/>and Policy Passed?"}
 
+    K -- "No" --> L["Human Approval / Escalation"]
+    L --> M["Controlled Execution<br/>(If Approved)"]
 
-```mermaid
----
-config:
-  layout: elk
----
-flowchart TD
-    A["Alert / Chat Question"] --> B["Incident Context Builder"]
-    B --> C["Query Router"]
+    K -- "Yes" --> M["Controlled Execution"]
 
-    C --> D1["Log Search<br/>Elasticsearch / OpenSearch"]
-    C --> D2["Metrics Query<br/>Prometheus / CloudWatch"]
-    C --> D3["Trace Query<br/>Jaeger / Tempo"]
-    C --> D4["Deployment / Config Index"]
-    C --> D5["Structured Knowledge Retrieval<br/>PageIndex-style Navigation"]
-    C --> D6["Semantic Similar Incident Search<br/>Vector DB / Embeddings"]
-    C --> D7["Service Dependency Graph"]
+    M --> N["Post-check"]
+    N --> O{"Post-check Passed?"}
 
-    D1 --> E["Incident Window Memory"]
-    D2 --> E
-    D3 --> E
-    D4 --> E
-    D5 --> E
-    D6 --> E
-    D7 --> E
-
-    E --> F["Evidence Pack"]
-    F --> G["Evidence Ranker"]
-    G --> H["Candidate Root Cause Generator"]
-    H --> I["Critic / Counterfactual Validator"]
-    I --> J["Root Cause Scoring"]
-    J --> K["Diagnosis + Safe Action Proposal"]
-    K --> L["Policy Verifier + Human Approval"]
-    L --> M["Controlled Execution / Post-check"]
-    M --> N["Incident Memory / Audit / Replay"]
+    O -- "Yes" --> P["Incident Memory<br/>Audit / Replay"]
+    O -- "No" --> Q["Rollback / Freeze / Escalation"]
+    Q --> P
 ```
 
 ```markdown
@@ -1646,7 +1621,7 @@ Runbook - check connection pool before rollback
 
 Agent 可以把它整理成证据链：
 
-> The error increase started shortly after deployment. The affected service depends on metadata-db. Metrics show database latency increased before the API error rate spike. Logs show connection timeout. A similar historical incident was caused by connection pool configuration. Therefore, a deployment-related DB connection configuration issue is a strong candidate root cause.
+> error rate 的上升发生在 deployment 之后不久。受影响的服务依赖 metadata-db。Metrics 显示 database latency 在 API error rate 上升之前已经升高。Logs 显示 database connection timeout。一个相似的历史 incident 也曾由 connection pool configuration 引起。因此，deployment 相关的 database connection configuration issue 是一个较强的候选根因。
 
 ---
 
@@ -2003,11 +1978,11 @@ AgentOps:
 
 MVP 目标可以定义为：
 
-> Build an AI-assisted RCA Agent that retrieves and ranks operational evidence from logs, metrics, deployments, runbooks, and incident history, then generates evidence-backed root cause candidates and safe next-step recommendations.
+> 构建一个 AI 辅助的 RCA Agent，能够从 logs、metrics、deployment records、runbooks 和历史 incident 中检索并排序运维证据，然后生成有证据支撑的候选根因和安全的下一步处理建议。
 
 ---
 
-## 11.2 MVP Reference Architecture
+## 11.2 MVP 参考架构
 
 ```mermaid
 ---
@@ -2015,7 +1990,7 @@ config:
   layout: elk
 ---
 flowchart TD
-    A["Alert / Chat Question"] --> B["Incident Context Builder"]
+    A["Alert / On-call / Chat Question"] --> B["Incident Context Builder"]
     B --> C["Query Router"]
 
     C --> D1["Log Search<br/>Elasticsearch / OpenSearch"]
@@ -2026,7 +2001,7 @@ flowchart TD
     C --> D6["Semantic Similar Incident Search<br/>Vector DB / Embeddings"]
     C --> D7["Service Dependency Graph"]
 
-    D1 --> E["Evidence Pack"]
+    D1 --> E["Incident Window Memory"]
     D2 --> E
     D3 --> E
     D4 --> E
@@ -2034,14 +2009,17 @@ flowchart TD
     D6 --> E
     D7 --> E
 
-    E --> F["Evidence Ranker"]
-    F --> G["Candidate Root Cause Generator"]
-    G --> H["Critic / Counterfactual Validator"]
-    H --> I["Root Cause Scoring"]
-    I --> J["Diagnosis + Safe Action Proposal"]
-    J --> K["Policy Verifier + Human Approval"]
-    K --> L["Controlled Execution / Post-check"]
-    L --> M["Incident Memory / Audit / Replay"]
+    E --> F["Evidence Pack"]
+    F --> G["Evidence Ranker"]
+    G --> H["Candidate Root Cause Generator"]
+    H --> I["Critic / Counterfactual Validator"]
+    I --> J["Root Cause Scoring"]
+    J --> K["Diagnosis + Safe Action Proposal"]
+    K --> L["Policy Verifier + Human Approval"]
+    L --> M["Controlled Execution / Post-check"]
+    M --> N["Rollback / Freeze<br/>(If Post-check Fails)"]
+    M --> O["Incident Memory / Audit / Replay"]
+    N --> O
 ```
 
 ```markdown
