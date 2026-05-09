@@ -2426,79 +2426,100 @@ Hybrid RCA Agent
 
 # 引用
 [1] AIOps Solutions for Incident Management: Technical Guidelines and A Comprehensive Literature Review.  
-https://arxiv.org/html/2404.01363v1
+https://arxiv.org/html/2404.01363v1  
+
 [2] AWS Systems Manager Automation, Open Policy Agent, and policy-as-code / approval-based automation practices for controlled remediation.  
 AWS Systems Manager Automation: https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html  
-Open Policy Agent: https://openpolicyagent.org/docs
+Open Policy Agent: https://openpolicyagent.org/docs  
+
 [3] ReAct / Reflexion / workflow-based agent reasoning.  
 ReAct: https://arxiv.org/abs/2210.03629  
-Reflexion: https://arxiv.org/abs/2303.11366
+Reflexion: https://arxiv.org/abs/2303.11366  
+
 [4] LangGraph workflow, checkpointing, and human-in-the-loop design.  
 LangGraph Persistence / Checkpointing: https://docs.langchain.com/oss/python/langgraph/persistence  
-LangSmith: https://docs.langchain.com/langsmith/home
+LangSmith: https://docs.langchain.com/langsmith/home  
+
 [5] OpenTelemetry semantic conventions and Collector architecture.  
 OpenTelemetry Semantic Conventions: https://opentelemetry.io/docs/concepts/semantic-conventions/  
 OpenTelemetry Kubernetes Resource Semantic Conventions: https://opentelemetry.io/docs/specs/semconv/resource/k8s/  
-OpenTelemetry Collector: https://opentelemetry.io/docs/collector/
+OpenTelemetry Collector: https://opentelemetry.io/docs/collector/  
+
 [6] OpenSearch / Elastic hybrid search, sparse retrieval, filtering, and reranking pipeline.  
 OpenSearch Hybrid Search: https://docs.opensearch.org/latest/vector-search/ai-search/hybrid-search/index/  
 OpenSearch Neural Sparse Search: https://docs.opensearch.org/latest/vector-search/ai-search/neural-sparse-search/  
 OpenSearch Filtered k-NN Search: https://docs.opensearch.org/latest/vector-search/filter-search-knn/index/  
-Elastic GenAI Search High Availability: https://www.elastic.co/docs/deploy-manage/reference-architectures/genai-search-high-availability
+Elastic GenAI Search High Availability: https://www.elastic.co/docs/deploy-manage/reference-architectures/genai-search-high-availability  
+
 [7] GraphRAG and graph-augmented retrieval for multi-hop reasoning.  
 How GraphRAG Elevates LLMs: https://redhorsecorp.com/how-graphrag-elevates-llms/  
 Beyond Correlation: Finding Root-Causes using a Network Digital Twin Graph and Agentic AI: https://aws.amazon.com/blogs/database/beyond-correlation-finding-root-causes-using-a-network-digital-twin-graph-and-agentic-ai/  
-Graph-Augmented Multi-Agent Robust Root Cause Analysis in AIOps: https://www.techscience.com/cmc/online/detail/26429/pdf
+Graph-Augmented Multi-Agent Robust Root Cause Analysis in AIOps: https://www.techscience.com/cmc/online/detail/26429/pdf  
+
 [8] StateGraph / MetaGraph approaches for Kubernetes RCA.  
-Simplifying Root Cause Analysis in Kubernetes with StateGraph and LLM: https://arxiv.org/html/2506.02490v1
+Simplifying Root Cause Analysis in Kubernetes with StateGraph and LLM: https://arxiv.org/html/2506.02490v1  
+
 [9] Hierarchical long-document retrieval and structured document indexing.  
 LlamaIndex Document Management / Indexing: https://developers.llamaindex.ai/python/framework/module_guides/indexing/document_management/  
-RAPTOR-style hierarchical retrieval / long-context retrieval reference: https://arxiv.org/pdf/2306.11417
+RAPTOR-style hierarchical retrieval / long-context retrieval reference: https://arxiv.org/pdf/2306.11417  
+
 [10] Vectorless RAG and PageIndex-style structured retrieval.  
 The Structural Pivot: Analytical Perspectives on Vectorless RAG and Hierarchical Page Indexing: https://medium.com/@sumanc/the-structural-pivot-analytical-perspectives-on-vectorless-retrieval-augmented-generation-and-823738e2b3c7  
 Vectorless RAG: PageIndex: https://www.geeksforgeeks.org/artificial-intelligence/vectorless-rag-pageindex/  
 Cookbook - Vectorless RAG with PageIndex: https://docs.pageindex.ai/cookbook/vectorless-rag-pageindex  
-Vectorless Reasoning-Based RAG: A New Approach to Retrieval-Augmented Generation: https://techcommunity.microsoft.com/blog/azuredevcommunityblog/vectorless-reasoning-based-rag-a-new-approach-to-retrieval-augmented-generation/4502238
+Vectorless Reasoning-Based RAG: A New Approach to Retrieval-Augmented Generation: https://techcommunity.microsoft.com/blog/azuredevcommunityblog/vectorless-reasoning-based-rag-a-new-approach-to-retrieval-augmented-generation/4502238  
+
 [11] VectifyAI PageIndex.  
-https://github.com/VectifyAI/PageIndex
+https://github.com/VectifyAI/PageIndex  
+
 [12] TS-RAG: Retrieval-Augmented Generation based Time Series Foundation Models.  
 arXiv: https://arxiv.org/abs/2503.07649  
-NeurIPS Poster: https://neurips.cc/virtual/2025/poster/118173
+NeurIPS Poster: https://neurips.cc/virtual/2025/poster/118173  
+
 [13] RAG4CTS / retrieval-augmented generation with covariate time series.  
 Retrieval-Augmented Generation with Covariate Time Series: https://arxiv.org/abs/2603.04951  
-HTML version: https://arxiv.org/html/2603.04951v2
+HTML version: https://arxiv.org/html/2603.04951v2  
+
 [14] Counterfactual reasoning and causal validation for LLM agents.  
 CAIR: Counterfactual-based Agent Influence Ranker for Agentic AI Workflows: https://aclanthology.org/2025.emnlp-main.958.pdf  
 CausalTrace: A Neurosymbolic Causal Analysis Agent for Smart Manufacturing: https://arxiv.org/html/2510.12033v1  
 Bayesian Network Structure Discovery Using Large Language Models: https://arxiv.org/html/2511.00574v1  
-BayesAgent: Bayesian Agentic Reasoning Under Uncertainty via Verbalized Probabilistic Graphical Modeling: https://ojs.aaai.org/index.php/AAAI/article/view/39347/43308
+BayesAgent: Bayesian Agentic Reasoning Under Uncertainty via Verbalized Probabilistic Graphical Modeling: https://ojs.aaai.org/index.php/AAAI/article/view/39347/43308  
+
 [15] RCAEval / AIOpsLab / Cloud-OpsBench style RCA evaluation.  
 RCAEval / RCA benchmark reference: https://arxiv.org/abs/2405.09330  
 AIOpsLab: https://microsoft.github.io/AIOpsLab/  
 Microsoft Research Introduces AIOpsLab: https://www.infoq.com/news/2025/01/microsoft-reasearch-aiopslab/  
-Cloud-OpsBench-style agentic operations benchmark reference: https://arxiv.org/abs/2603.00468
+Cloud-OpsBench-style agentic operations benchmark reference: https://arxiv.org/abs/2603.00468  
+
 [16] SafeAgent / policy-controlled tool use / action governance.  
 SafeAgent-style policy-controlled execution reference: https://arxiv.org/abs/2503.18666  
-AgentSpec / PCAS-style runtime constraints reference: https://arxiv.org/abs/2601.02732
+AgentSpec / PCAS-style runtime constraints reference: https://arxiv.org/abs/2601.02732  
+
 [17] AgentOps / LLM observability / tool trace and evidence auditability.  
 Red Hat AgentOps: https://www.redhat.com/en/topics/ai/agentops  
 IBM AgentOps: https://www.ibm.com/think/topics/agentops  
 Datadog LLM Observability: https://docs.datadoghq.com/llm_observability/terms/  
-TensorOps Agent Observability: https://tensorops.ai/blog/agent-observability-documenting-the-work
+TensorOps Agent Observability: https://tensorops.ai/blog/agent-observability-documenting-the-work  
+
 [18] Cloud-native AI operations benchmark and remediation evaluation.  
 AIOpsLab: https://microsoft.github.io/AIOpsLab/  
 MicroRemed / remediation benchmark reference: https://arxiv.org/abs/2602.16708  
-E2E-REME / remediation evaluation reference: https://arxiv.org/abs/2412.17015
+E2E-REME / remediation evaluation reference: https://arxiv.org/abs/2412.17015  
+
 [19] Recent tool-augmented and agentic RCA work, including AMER-RCL / TAMO-style RCA agents and related tool-use RCA research.  
 AMER-RCL / agentic RCA reference: https://arxiv.org/abs/2601.02732  
 Tool-augmented RCA / AIOpsLab environment reference: https://microsoft.github.io/AIOpsLab/  
-Agentic RCA benchmark reference: https://arxiv.org/abs/2603.00468
+Agentic RCA benchmark reference: https://arxiv.org/abs/2603.00468  
+
 [20] Online and adaptive log parsing methods such as HELP-style online log template extraction for evolving production logs.  
-HELP-style online log parsing / adaptive log template extraction reference: https://arxiv.org/abs/2410.10021
+HELP-style online log parsing / adaptive log template extraction reference: https://arxiv.org/abs/2410.10021  
+
 [21] PyRCA and industrial RCA algorithm frameworks for unified anomaly detection and causal RCA pipelines.  
 PyRCA project: https://github.com/salesforce/PyRCA  
-RCAEval / RCA benchmark reference: https://arxiv.org/abs/2405.09330
+RCAEval / RCA benchmark reference: https://arxiv.org/abs/2405.09330  
+
 [22] BARO, DynaCausal, OCEAN, and related work on change-point detection, dynamic causal learning, and graph-free / graph-based RCA.  
 BARO / robust change-point and RCA reference: https://arxiv.org/abs/2408.13729  
 DynaCausal / dynamic causal RCA reference: https://arxiv.org/html/2601.21359v1  
-OCEAN / online causal structure learning reference: https://arxiv.org/abs/2405.09330
+OCEAN / online causal structure learning reference: https://arxiv.org/abs/2405.09330  
