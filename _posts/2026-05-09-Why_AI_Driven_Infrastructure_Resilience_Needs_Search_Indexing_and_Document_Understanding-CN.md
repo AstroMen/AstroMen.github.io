@@ -58,13 +58,13 @@ lang: zh
 > runbook 里是否允许 rollback？  
 > 这个 action 是否可能造成 secondary failure？
 
-这就是 AI-driven RCA Agent 需要解决的问题。
+这就是 AI-driven RCA Agent 需要解决的问题。近年来的 AIOps 和 agentic operations 研究也逐渐从“让 LLM 直接看日志猜根因”转向 evidence-grounded RCA，即让模型基于工具检索和证据链进行诊断，而不是把 LLM 当作事实记忆库。[1][19]
 
 ---
 
 ## 1.2 Evidence-Grounded RCA Agent 的核心原则
 
-RCA Agent 不应该直接“看全部日志然后猜答案”。更合理的方式是：
+RCA Agent 不应该直接“看全部日志然后猜答案”。更合理的方式是构建 workflow-first 的 evidence-grounded agent，让 LLM 作为 planner、tool caller 和 evidence synthesizer，并在关键节点加入 critic、checkpoint 和 human-in-the-loop 控制。[1][3][4]
 
 ```text
 LLM plans
@@ -84,8 +84,68 @@ Human approves high-risk actions
 
 一个典型 workflow 可以是：
 
-```text
-Alert / On-call / Chat Question
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    A["Incident Trigger<br/>(Alert, On-call, or Chat Question)"] --> B["Incident Context Builder"]
+    B --> C["Planner"]
+    C --> D["Retriever Router"]
+    D --> E["Evidence Pack Builder"]
+    E --> F["RCA Synthesizer"]
+    F --> G["Critic / Counterfactual Validator"]
+    G --> H["Root Cause Scoring"]
+    H --> I["Policy Governor"]
+    I --> J["Diagnosis + Safe Action Proposal"]
+    J --> K["Human Approval / Controlled Execution"]
+    K --> L["Post-check / Rollback / Incident Memory"]
+```
+
+
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    A["Alert / Chat Question"] --> B["Incident Context Builder"]
+    B --> C["Query Router"]
+
+    C --> D1["Log Search<br/>Elasticsearch / OpenSearch"]
+    C --> D2["Metrics Query<br/>Prometheus / CloudWatch"]
+    C --> D3["Trace Query<br/>Jaeger / Tempo"]
+    C --> D4["Deployment / Config Index"]
+    C --> D5["Structured Knowledge Retrieval<br/>PageIndex-style Navigation"]
+    C --> D6["Semantic Similar Incident Search<br/>Vector DB / Embeddings"]
+    C --> D7["Service Dependency Graph"]
+
+    D1 --> E["Incident Window Memory"]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    D5 --> E
+    D6 --> E
+    D7 --> E
+
+    E --> F["Evidence Pack"]
+    F --> G["Evidence Ranker"]
+    G --> H["Candidate Root Cause Generator"]
+    H --> I["Critic / Counterfactual Validator"]
+    I --> J["Root Cause Scoring"]
+    J --> K["Diagnosis + Safe Action Proposal"]
+    K --> L["Policy Verifier + Human Approval"]
+    L --> M["Controlled Execution / Post-check"]
+    M --> N["Incident Memory / Audit / Replay"]
+```
+
+```markdown
+<!--
+ARCHIVED — kept for editing reference only. Do not render in preview.
+
+Incident Trigger
+(alert, on-call, or chat question)
         ↓
 Incident Context Builder
         ↓
@@ -108,6 +168,7 @@ Diagnosis + Safe Action Proposal
 Human Approval / Controlled Execution
         ↓
 Post-check / Rollback / Incident Memory
+-->
 ```
 
 在这个架构中，Agent 不是直接读取所有数据，而是通过受控工具访问不同证据源：
@@ -192,6 +253,8 @@ Post-check / Rollback / Incident Memory
 
 > An operational search and evidence layer for production infrastructure.
 
+这种从“被动数据收集”到“主动证据服务”的转变，也与近期 agentic RCA 和 typed retrieval 架构中的数据感知层设计一致。[1][6][19]
+
 ---
 
 ## 2.3 Canonical Incident Schema：统一证据语义
@@ -238,7 +301,7 @@ deployment event:
   deployed_at = 10:01
 ```
 
-统一 schema 后，Agent 才能把这些信号连成同一个 incident context，而不是把它们当作孤立事件。
+统一 schema 后，Agent 才能把这些信号连成同一个 incident context，而不是把它们当作孤立事件。OpenTelemetry 等观测标准也说明，logs、metrics、traces 和 resource attributes 需要共享语义字段，才能支持跨信号关联和后续 RCA。[5]
 
 ---
 
@@ -279,6 +342,8 @@ deployment event:
 这种结构化 change index 可以帮助 Agent 快速回答：
 
 > 事故发生前 5-15 分钟内，哪些变更最可能相关？
+
+这类 change-aware preprocessing 与近期 RCA 研究强调的 deployment/config/context-aware diagnosis 是一致的，因为许多事故并不是资源突然失效，而是由 recent change 触发。[1][19]
 
 ---
 
@@ -347,7 +412,7 @@ Incident Window Memory
 - runbook 是否说明了 rollback 条件？
 - dependency graph 是否显示上游服务异常？
 
-这些都依赖不同类型的索引。
+这些都依赖不同类型的索引。近期 hybrid retrieval 和 agentic RCA 研究也支持 typed multi-index 的思路：不同证据应进入不同索引，而不是全部塞进一个 vector database。[6][9][10]
 
 ---
 
@@ -517,7 +582,7 @@ Vector index 用于查找“意思相近但字面不同”的内容。
 - similar mitigation procedures；
 - related error explanations。
 
-但是，semantic retrieval 不应该替代 keyword search。更合理的是 hybrid retrieval：
+但是，semantic retrieval 不应该替代 keyword search。更合理的是 hybrid retrieval，因为 RCA 同时需要精确 token 匹配、metadata filtering、semantic recall 和 reranking。[6]
 
 ```text
 Exact keyword search
@@ -590,7 +655,7 @@ Graph index 对 RCA 很重要，因为根因分析不是只看“哪里红了”
 | Dynamic StateGraph | 对 K8s / cloud-native RCA 很强 | 实现复杂，数据量大 |
 | Graph-free fallback | 图缺失时仍可工作 | 因果路径解释能力弱 |
 
-建议做法是：**Graph-first, graph-optional**。有可信 graph 时优先使用拓扑推理；graph 缺失或不可信时，自动回退到 correlation-first / graph-free RCA。
+建议做法是：**Graph-first, graph-optional**。有可信 graph 时优先使用拓扑推理；graph 缺失或不可信时，自动回退到 correlation-first / graph-free RCA。GraphRAG、StateGraph 和 Kubernetes RCA 相关研究也说明，拓扑和运行态图可以显著增强多跳故障传播分析，但图质量和新鲜度会直接影响结果可靠性。[7][8]
 
 ---
 
@@ -674,7 +739,7 @@ Router:
     - incident memory
 ```
 
-这个 router 是 Hybrid RCA Retrieval 的关键。没有 router，多索引系统很容易退化成“什么都查一点”，导致延迟高、噪声大、结果难以解释。
+这个 router 是 Hybrid RCA Retrieval 的关键。没有 router，多索引系统很容易退化成“什么都查一点”，导致延迟高、噪声大、结果难以解释。近期关于 hybrid search、composite retrieval 和 agentic RCA 的实践也强调 query routing 与 evidence fusion 的重要性。[6][9][19]
 
 ---
 
@@ -791,7 +856,7 @@ Chunk 5: Escalation - Contact platform team if STS errors persist
 
 > heading-aware chunking + metadata enrichment + limited semantic splitting
 
-不要一开始就完全依赖 LLM 自动切分所有文档。
+不要一开始就完全依赖 LLM 自动切分所有文档。长文档检索和层级化 RAG 研究也表明，保留文档结构通常比简单 fixed-size chunking 更适合复杂知识定位。[9][10]
 
 ---
 
@@ -856,7 +921,7 @@ Chunk 5: Escalation - Contact platform team if STS errors persist
 | LLM structured extraction | runbook, postmortem, incident notes | 对自然语言理解强 | 需要 validation，不能直接信任 |
 | Hybrid extraction | 关键字段用 parser，自然语言用 LLM | 最稳妥 | 实现复杂度较高 |
 
-生产系统中，关键字段如 timestamp、service、region、error code、request ID 应尽量用 deterministic logic 抽取。LLM 更适合抽取 symptom、root cause、mitigation、risk warning 这类自然语言信息。
+在实践中，更安全的方式是采用 hybrid extraction strategy：timestamp、service name、region、error code、request ID、pod name 等关键字段应优先由 deterministic parser、schema-based parser 或 log template extraction 处理；而 symptom、root cause、mitigation、risk warning 等自然语言字段，可以使用 LLM structured extraction，但进入索引前必须经过 validation。[1][5][20]
 
 ---
 
@@ -933,6 +998,8 @@ Evidence Pack 的好处是：
 - 支持回归测试；
 - 方便 Critic 检查支持证据和反证。
 
+Evidence Pack 的设计可以降低 hallucination 和 reasoning drift，因为它把 raw retrieval results 转换为带来源、分数、反证和缺失信息的结构化输入。[1][17][19]
+
 ---
 
 # 5. Vectorless RAG：基于结构导航的检索方式
@@ -977,7 +1044,7 @@ Precise Section Retrieval
 LLM Output
 ```
 
-它的核心目标不是找到“相似文本”，而是找到“正确位置”。
+它的核心目标不是找到“相似文本”，而是找到“正确位置”。这也是 Vectorless RAG 相关讨论中强调的重点：对于结构化文档，retrieval 应优先保留文档层级和逻辑位置，而不是只依赖 embedding similarity。[9][10]
 
 例如，对于一个 runbook，问题不是：
 
@@ -990,6 +1057,14 @@ LLM Output
 > escalation policy 在哪里？
 
 这类问题更适合结构化导航。
+
+| Traditional Vector RAG | Vectorless / Structured RAG |
+|---|---|
+| Chunk documents | Parse document structure |
+| Embed chunks | Build structured section index |
+| Search by similarity | Navigate by document hierarchy |
+| Return top-k chunks | Return precise section path |
+| Best for semantic similarity | Best for structured knowledge and safety rules |
 
 ---
 
@@ -1107,7 +1182,9 @@ RCA Agent
 
 ## 6.1 PageIndex-style 是什么
 
-PageIndex-style retrieval 是一种基于文档结构的检索思路。它的核心思想是：
+PageIndex-style retrieval 是一种基于文档结构的检索思路，代表性实现如 PageIndex 会为长文档建立类似 Table of Contents 的层级树，再通过 reasoning-based navigation 定位相关 section。[10][11]
+
+它的核心思想是：
 
 > 先为文档建立类似 Table of Contents 的层级结构索引，然后根据 query 在树状结构中进行导航，定位最相关的 section、subsection 或 paragraph。
 
@@ -1160,7 +1237,24 @@ PageIndex-style retrieval 通常需要一个离线或准实时的 indexing pipel
 
 流程可以是：
 
-```text
+```mermaid
+flowchart TD
+    A["Runbook / Postmortem / Architecture Doc"] --> B["Parse Document"]
+    B --> C["Detect Structure"]
+    C --> D["Build Document Tree<br/>(document → section → subsection → paragraph/table)"]
+    D --> E["Attach Metadata<br/>(service, owner, doc_type, updated_at, risk_level)"]
+    E --> F["Store Structured Index"]
+
+    G["Query:<br/>Is rollback safe?"] --> H["Query Router"]
+    H --> I["Navigate Document Tree"]
+    I --> J["Retrieve Precise Section"]
+    J --> K["Return Evidence with Section Path"]
+```
+
+```markdown
+<!--
+ARCHIVED — kept for editing reference only. Do not render in preview.
+
 Runbooks / Postmortems / Architecture Docs
         ↓
 Parse Document
@@ -1174,6 +1268,7 @@ Attach Metadata:
   service, doc_type, owner, updated_at, risk_level
         ↓
 Store Structured Index
+-->
 ```
 
 其中 metadata 很重要，例如：
@@ -1202,27 +1297,19 @@ Store Structured Index
 ```text
 Question:
 "Is rollback safe for workspace-service after DB schema migration?"
-
         ↓
-
 Query Router:
 This is a safety / rollback question.
-
         ↓
-
 Navigate:
 Runbook
   → Workspace Service
   → Deployment Recovery
   → Rollback Conditions
   → Database Migration Safety
-
         ↓
-
 Retrieve Precise Section
-
         ↓
-
 Return evidence with section path
 ```
 
@@ -1337,13 +1424,21 @@ Hybrid RCA Retrieval
 + Evidence Ranking
 ```
 
-每类数据使用最适合的方法。
+每类数据都应该使用最适合自身结构和用途的检索方式。对于精确错误排查，keyword search 和 metadata filter 更重要；对于历史经验迁移，vector search 更有价值；对于 runbook safety rule，structured document navigation 更稳定；而对于故障传播分析，graph index 更合适。[6][7][10]
 
 ---
 
 ## 7.2 Query Routing：不同问题走不同索引路径
 
 RCA Agent 的一个关键能力是 query routing。不同问题应该查不同的数据源。
+
+它不是直接把问题丢给所有索引，而是先解析 incident context，再根据问题类型选择最合适的 retrieval path。
+
+在实际 workflow 中，retrieval 可以拆成四个步骤：
+1. 解析 incident context，包括 service、region、symptom 和 time window。
+2. 根据 query 类型选择合适的索引和工具。
+3. 从 logs、metrics、traces、documents、dependency graph 等来源检索并 rerank evidence。
+4. 构建 Evidence Pack，交给 RCA Agent 做后续分析。
 
 | Query 类型 | 应该查询的数据源 |
 |---|---|
@@ -1414,7 +1509,7 @@ normalized_score =
 | Learned reranker | 效果可能更好 | 需要训练数据和在线评估 |
 | Rule-based reranker | 可控，适合 MVP | 需要人工调权重 |
 
-MVP 阶段建议先用 rule-based late fusion，等积累足够 incident replay 数据后，再训练 learned reranker。
+MVP 阶段建议先用 rule-based late fusion，等积累足够 incident replay 数据后，再训练 learned reranker。这种渐进方式更适合 RCA 场景，因为不同索引的 score 语义不同，需要先通过 normalization、source weighting 和 reranking 控制结果质量。[6]
 
 ---
 
@@ -1532,7 +1627,7 @@ MVP 中可以先实现：
 
 > change-point detection + historical metric pattern search + evidence pack integration
 
-不需要一开始就训练或部署复杂时间序列基础模型。
+不需要一开始就训练或部署复杂时间序列基础模型。TS-RAG 和 RAG4CTS 等研究说明，时间序列也可以通过 retrieval-augmented 的方式复用历史模式，但在工程落地中可以先从轻量级 metric pattern retrieval 做起。[12][13]
 
 ---
 
@@ -1593,7 +1688,7 @@ Critic 的输出不应该只是“同意/不同意”，而应该输出：
 }
 ```
 
-这种机制可以减少 LLM hallucination 和 reasoning drift。
+这种机制可以减少 LLM hallucination 和 reasoning drift。它与 Reflexion、自我反馈和 counterfactual reasoning 的方向一致：不是只生成一个 plausible root cause，而是主动检查反证、缺失证据和假设反转后的推理稳定性。[3][14]
 
 ---
 
@@ -1652,7 +1747,7 @@ evidence_score =
 - `contradiction_penalty`：是否与其他证据冲突；
 - `safety_priority_boost`：如果是 safety constraint，应提高优先级。
 
-例如，当用户问“是否可以 rollback”，即使某个 safety warning 的语义相似度不是最高，也应该因为 section_type = safety_constraint 而提升排名。
+例如，当用户问“是否可以 rollback”，即使某个 safety warning 的语义相似度不是最高，也应该因为 section_type = safety_constraint 而提升排名。在 RCA 场景中，evidence ranking 不应只看文本相关性，还应综合 time proximity、entity match、change relevance、topology relevance、freshness、source reliability、contradiction penalty 和 safety priority。[6][7][17]
 
 ---
 
@@ -1750,7 +1845,7 @@ Confidence:
   Medium-high, pending config diff verification.
 ```
 
-这比单纯输出自然语言结论更适合生产 RCA。
+这种输出方式比流畅但缺乏证据支撑的自然语言回答更适合生产 RCA。显式展示 supporting evidence、conflicting evidence、missing evidence 和 confidence，也能让结果更容易被审计、回放，并用于后续 historical incident evaluation。[1][17][19]
 
 ---
 
@@ -1852,6 +1947,8 @@ Counterfactual Validator Tool:
 
 > change-point detection → candidate generators → evidence pack → critic validation → root cause ranking
 
+这种 tool-based RCA architecture 更适合生产系统，因为 anomaly detection、causal graph、graph-free fallback 和 time-series similarity 可以逐步替换或增强，而不需要一开始训练端到端 RCA 大模型。[15][21][22]
+
 ---
 
 # 11. MVP 架构：如何实际落地
@@ -1912,7 +2009,45 @@ MVP 目标可以定义为：
 
 ## 11.2 MVP Reference Architecture
 
-```text
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    A["Alert / Chat Question"] --> B["Incident Context Builder"]
+    B --> C["Query Router"]
+
+    C --> D1["Log Search<br/>Elasticsearch / OpenSearch"]
+    C --> D2["Metrics Query<br/>Prometheus / CloudWatch"]
+    C --> D3["Trace Query<br/>Jaeger / Tempo"]
+    C --> D4["Deployment / Config Index"]
+    C --> D5["Structured Knowledge Retrieval<br/>PageIndex-style Navigation"]
+    C --> D6["Semantic Similar Incident Search<br/>Vector DB / Embeddings"]
+    C --> D7["Service Dependency Graph"]
+
+    D1 --> E["Evidence Pack"]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    D5 --> E
+    D6 --> E
+    D7 --> E
+
+    E --> F["Evidence Ranker"]
+    F --> G["Candidate Root Cause Generator"]
+    G --> H["Critic / Counterfactual Validator"]
+    H --> I["Root Cause Scoring"]
+    I --> J["Diagnosis + Safe Action Proposal"]
+    J --> K["Policy Verifier + Human Approval"]
+    K --> L["Controlled Execution / Post-check"]
+    L --> M["Incident Memory / Audit / Replay"]
+```
+
+```markdown
+<!--
+ARCHIVED — kept for editing reference only. Do not render in preview.
+
                  Alert / Chat Question
                          ↓
                Incident Context Builder
@@ -1955,13 +2090,14 @@ MVP 目标可以定义为：
            Controlled Execution / Post-check
                          ↓
         Incident Memory / Audit / Replay
+-->
 ```
 
 ---
 
 ## 11.3 性能与可扩展性设计
 
-RCA 系统的性能瓶颈通常不在 LLM，而在：
+RCA 系统的性能瓶颈通常不在 LLM，而在多索引系统本身，包括：
 
 - index write throughput；
 - log time range scan；
@@ -2037,7 +2173,7 @@ Freshness warning:
   Service graph snapshot is 15 minutes old.
 ```
 
-这对生产系统非常重要。
+这对生产系统非常重要。近期关于 agentic operations 和 hybrid retrieval 的讨论也强调，多索引系统必须显式暴露 freshness、index version 和 evidence provenance，否则 Agent 很容易基于过期证据做出错误判断。[6][9][17]
 
 ---
 
@@ -2048,13 +2184,13 @@ Freshness warning:
 更安全的方式是：
 
 ```text
-LLM plans
-Tools retrieve
-Ranker filters
-LLM reasons from evidence
-Critic challenges
-Policy verifies
-Human approves high-risk actions
+The system follows a controlled reasoning pattern:
+1. The LLM plans the investigation.
+2. Tools retrieve operational evidence.
+3. Rankers filter and prioritize evidence.
+4. The LLM reasons from evidence.
+5. Policy verifies proposed actions.
+6. Humans approve high-risk operations.
 ```
 
 ---
@@ -2153,7 +2289,7 @@ Rollback/freeze:
   stop further rollout if post-check fails
 ```
 
-这能防止 Agent 把“诊断建议”误变成危险操作。
+这能防止 Agent 把“诊断建议”误变成危险操作。SafeAgent、policy-controlled tool use 和 action governance 相关方向也强调，生产环境中的自动执行必须通过 parameterized action、policy gate、pre-check、post-check 和 human approval 控制。[2][16]
 
 ---
 
@@ -2197,11 +2333,13 @@ Alert
 - 哪些证据反驳结论；
 - 为什么某个 action 被允许或阻止。
 
+这种 Evidence DAG 思路也与 AgentOps / LLM observability 的方向一致：真正可上线的 Agent 不只需要回答，还需要保留 tool trace、retrieval trace、policy decision 和 action outcome。[4][17]
+
 ---
 
 # 13. Evaluation：如何验证系统是否真的有效
 
-一个 RCA Agent 不能只看“回答是否流畅”。需要从 retrieval、RCA、safety、latency、auditability 多维评估。
+一个 RCA Agent 不能只看“回答是否流畅”。需要从 retrieval、RCA、safety、latency、auditability 多维评估。AIOpsLab、Cloud-OpsBench、RCAEval 等 benchmark 的出现，也说明 agentic operations 需要从单点回答准确率转向工具调用、环境交互、执行安全和回放评测。[15][18]
 
 ## 13.1 Retrieval Metrics
 
@@ -2268,7 +2406,7 @@ Add critic:
   add counterfactual validator
 ```
 
-观察每层对 RCA accuracy、latency、safety 的增量。
+Ablation test 的目标是衡量每一层到底给 RCA accuracy、latency 和 safety 带来了多少增益。对于这种 layered RCA architecture，ablation 尤其重要，因为它可以验证 traces、deployment/config indexes、graph indexes、vector incident search、structured runbook retrieval 和 critic 是否分别提供了可量化价值。[15][18]
 
 ---
 
@@ -2305,3 +2443,29 @@ Hybrid RCA Agent
 - 可验证。
 
 这才是 AI Agent 在云原生基础设施自动诊断中真正可落地、可扩展、可进入生产系统的方向。
+
+---
+
+# References
+[1] AIOps Solutions for Incident Management: Technical Guidelines and A Comprehensive Literature Review.  
+[2] AWS Systems Manager Automation, Open Policy Agent, and policy-as-code / approval-based automation practices for controlled remediation.  
+[3] ReAct / Reflexion / workflow-based agent reasoning.  
+[4] LangGraph workflow, checkpointing, and human-in-the-loop design.  
+[5] OpenTelemetry semantic conventions and Collector architecture.  
+[6] OpenSearch / Elastic hybrid search, sparse retrieval, filtering, and reranking pipeline.  
+[7] GraphRAG and graph-augmented retrieval for multi-hop reasoning.  
+[8] StateGraph / MetaGraph approaches for Kubernetes RCA.  
+[9] Hierarchical long-document retrieval and structured document indexing.  
+[10] Vectorless RAG and PageIndex-style structured retrieval.  
+[11] VectifyAI PageIndex.  
+[12] TS-RAG: Retrieval-Augmented Generation based Time Series Foundation Models.  
+[13] RAG4CTS / retrieval-augmented generation with covariate time series.  
+[14] Counterfactual reasoning and causal validation for LLM agents.  
+[15] RCAEval / AIOpsLab / Cloud-OpsBench style RCA evaluation.  
+[16] SafeAgent / policy-controlled tool use / action governance.  
+[17] AgentOps / LLM observability / tool trace and evidence auditability.  
+[18] Cloud-native AI operations benchmark and remediation evaluation.
+[19] Recent tool-augmented and agentic RCA work, including AMER-RCL / TAMO-style RCA agents and related tool-use RCA research.  
+[20] Online and adaptive log parsing methods such as HELP-style online log template extraction for evolving production logs.  
+[21] PyRCA and industrial RCA algorithm frameworks for unified anomaly detection and causal RCA pipelines.  
+[22] BARO, DynaCausal, OCEAN, and related work on change-point detection, dynamic causal learning, and graph-free / graph-based RCA.  
