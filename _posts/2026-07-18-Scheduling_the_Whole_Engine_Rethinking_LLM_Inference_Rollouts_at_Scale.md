@@ -32,12 +32,6 @@ A production LLM replica may actually be a coordinated engine spanning multiple 
 
 The scheduler is therefore no longer placing a collection of independent pods. It is proving that one complete serving engine can exist and that introducing it will not destabilize the system around it.
 
-> **Image 1 placement**
->
-> Insert the photo titled **"A scheduling request is a stack of constraints"** here.
->
-> Suggested caption: *Scheduling a large inference engine requires preserving serving intent, eligibility, hardware shape, topology, and transition safety.*
-
 ## The Serving Unit Is the Whole Engine
 
 The most important abstraction shift is simple:
@@ -69,12 +63,6 @@ Individual worker placements can all appear locally valid while still making the
 
 A whole engine request preserves atomic intent across scheduling layers and allows the rarest or most constrained shape to be considered first.
 
-> **Image 2 placement**
->
-> Insert the photo titled **"One LLM engine can be a group"** here.
->
-> Suggested caption: *A single serving engine may span multiple GPU workers that must fit, connect, and start together.*
-
 ## Capacity Is a Shape, Not Just a Number
 
 A cluster may report many idle GPUs and still be unable to start an engine.
@@ -96,12 +84,6 @@ Traditional fragmentation metrics focus on unused devices. For large inference e
 A fleet could have 100 GPUs free in total and still be unable to satisfy an 80 GPU request if those devices are divided across clusters or connection domains that cannot be combined.
 
 In this environment, operationally meaningful inventory should track **eligible contiguous shapes**, not only idle GPU counts.
-
-> **Image 3 placement**
->
-> Insert the photo titled **"Fragmentation is about usable shape, not leftover GPUs"** here.
->
-> Suggested caption: *Total free GPU count can be misleading when the next request requires one eligible, contiguous topology.*
 
 ## A Scheduling Request Is a Stack of Constraints
 
@@ -259,12 +241,6 @@ The gate then compares signals such as:
 - Numerical divergence between outputs
 
 When a regression appears, the rollout is held for investigation. A clean result provides evidence to continue, although production monitoring remains necessary because a gate can validate only the behaviors it measures.
-
-> **Image 4 placement**
->
-> Insert the photo titled **"How we validate a new engine image"** here.
->
-> Suggested caption: *The deployment gate compares a known good reference and a candidate under the same workload and environment.*
 
 ## The End to End Workflow
 
