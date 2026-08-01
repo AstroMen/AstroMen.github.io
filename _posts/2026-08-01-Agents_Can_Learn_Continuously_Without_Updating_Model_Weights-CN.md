@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "不更新模型权重，Agent 也能持续学习"
-date:   2026-05-09
+date:   2026-08-01
 categories: jekyll update
 tags: 
   - AI Agent
