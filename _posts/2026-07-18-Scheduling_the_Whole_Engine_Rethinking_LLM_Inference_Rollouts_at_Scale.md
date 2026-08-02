@@ -11,8 +11,6 @@ tags:
 lang: en
 ---
 
-{% include lang-switch.html %}
-
 *Notes and reflections from OpenAI's infrastructure presentation at AGI Summit 2026*
 
 At AGI Summit 2026 in San Francisco, I attended an OpenAI infrastructure presentation by Dong Meng and Zihan "Gavin" Zheng on a problem that sounds routine but becomes fundamentally different at large scale: updating an inference service.
